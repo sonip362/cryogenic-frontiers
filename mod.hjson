@@ -1,0 +1,18 @@
+name: "cryogenic-frontiers"
+displayName: "[#6ecdec]Cryogenic Frontiers[]"
+author: "sonip362"
+description: '''
+A cryogenic technology expansion mod for Mindustry.
+Unlocks the untapped potential of Cryofluid with solid Cryo-Crystals, sub-zero weaponry, thermodynamic stirling power generators, and reactive freezing fortifications.
+
+Features:
+- New Materials: Cryo-Crystal, Cryo-Alloy (superconducting cryogenic alloy)
+- New Production: Cryo-Crystallizer, Industrial Cryo-Crystallizer (3x3 high-yield batch crafter), Cryo-Alloy Foundry
+- New Drills: Cryo Drill (3x3 rapid subzero drill), Titan Drill (5x5 colossal tier-5 excavator)
+- New Turrets: Frostbite (rapid shard gun), Permafrost (cluster mortar), Absolute Zero (piercing cryo-laser), Glacialis (4x4 railgun), Blizzard (rotary cannon), Avalanche (guided torpedo battery)
+- New Power: Thermo-Stirling Engine (450 power/s), Zero-Point Cryo-Reactor (3,600 power/s)
+- New Defense: Cryo Wall & Large Cryo Wall (reactive freeze blast upon destruction)
+'''
+version: "1.3.0"
+minGameVersion: "136"
+hidden: false

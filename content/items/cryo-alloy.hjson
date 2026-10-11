@@ -1,0 +1,10 @@
+name: "Cryo-Alloy"
+description: "A superconducting ultra-dense composite alloy formed by fusing Cryo-Crystals with Titanium and Surge Alloy under cryogenic compression. Immune to thermal stress and possesses extraordinary tensile strength."
+cost: 3.5
+color: "78f3e5"
+flammability: -1.0
+explosiveness: 0.0
+radioactivity: 0.0
+charge: 0.8
+hardness: 5
+research: cryo-crystal

@@ -1,0 +1,44 @@
+type: PowerTurret
+name: "Absolute Zero"
+description: "Focuses a sustained, high-energy cryogenic beam that pierces through multiple enemies, dealing heavy thermal shock damage and freezing them in place."
+size: 3
+health: 1200
+range: 220
+reload: 75
+recoil: 2
+shootSound: laser
+targetAir: true
+targetGround: true
+shootType: {
+  type: LaserBulletType
+  damage: 340
+  colors: [
+    "a9d8ff66"
+    "6ecdecff"
+    "ffffffff"
+  ]
+  length: 235
+  width: 25
+  sideAngle: 45
+  sideWidth: 1.5
+  sideLength: 50
+  status: freezing
+  statusDuration: 300
+  hitEffect: hitLancer
+  healPercent: 0
+}
+consumes: {
+  power: 6
+  coolant: {
+    amount: 0.2
+    optional: true
+  }
+}
+requirements: [
+  lead/140
+  titanium/110
+  silicon/95
+  cryo-crystal/60
+]
+category: turret
+research: lancer

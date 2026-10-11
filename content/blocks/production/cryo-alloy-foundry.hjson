@@ -1,0 +1,33 @@
+type: GenericCrafter
+name: "Cryo-Alloy Foundry"
+description: "Compresses and supercools Titanium, Surge Alloy, and Cryo-Crystals into superconducting Cryo-Alloy plates using high-pressure cryogenic baths."
+size: 3
+health: 1100
+hasPower: true
+hasItems: true
+hasLiquids: true
+itemCapacity: 25
+liquidCapacity: 40
+craftTime: 75
+consumes: {
+  power: 5
+  items: [
+    titanium/3
+    surge-alloy/1
+    cryo-crystal/2
+  ]
+  liquid: {
+    liquid: cryofluid
+    amount: 0.15
+  }
+}
+outputItem: cryo-alloy/1
+craftEffect: vapor
+category: crafting
+research: cryo-crystallizer
+requirements: [
+  lead/160
+  silicon/120
+  titanium/110
+  cryo-crystal/60
+]

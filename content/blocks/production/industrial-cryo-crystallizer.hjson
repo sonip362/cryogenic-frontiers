@@ -1,0 +1,33 @@
+type: GenericCrafter
+name: "Industrial Cryo-Crystallizer"
+description: "A massive, high-capacity crystallization facility. Uses cryogenic flash-compression to rapidly crystallize Titanium, Silicon, and Cryofluid into large batches of Cryo-Crystals at high efficiency."
+size: 3
+health: 1200
+hasPower: true
+hasItems: true
+hasLiquids: true
+itemCapacity: 40
+liquidCapacity: 60
+craftTime: 60
+consumes: {
+  power: 5.5
+  items: [
+    titanium/5
+    silicon/3
+  ]
+  liquid: {
+    liquid: cryofluid
+    amount: 0.45
+  }
+}
+outputItem: cryo-crystal/3
+craftEffect: vapor
+category: crafting
+research: cryo-crystallizer
+requirements: [
+  copper/180
+  lead/160
+  titanium/140
+  silicon/100
+  cryo-crystal/40
+]

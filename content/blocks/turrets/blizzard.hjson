@@ -1,0 +1,76 @@
+type: ItemTurret
+name: "Blizzard"
+description: "A multi-barrel rotary cryogenic storm cannon. Unleashes a devastating torrent of supercooled flechettes that push back assault waves with violent knockback and continuous freezing."
+size: 3
+health: 1650
+range: 220
+reload: 6
+recoil: 1.5
+shootSound: shootSnap
+targetAir: true
+targetGround: true
+inaccuracy: 6
+velocityRnd: 0.15
+ammoTypes: {
+  cryo-alloy: {
+    type: BasicBulletType
+    speed: 9
+    lifetime: 25
+    damage: 68
+    knockback: 2.2
+    width: 8
+    height: 14
+    frontColor: "ffffff"
+    backColor: "78f3e5"
+    pierce: true
+    pierceCap: 2
+    status: freezing
+    statusDuration: 240
+    fragBullets: 3
+    fragBullet: {
+      type: BasicBulletType
+      speed: 4
+      lifetime: 12
+      damage: 18
+      width: 4
+      height: 6
+      frontColor: "ffffff"
+      backColor: "a9d8ff"
+      status: freezing
+      statusDuration: 120
+    }
+  }
+  cryo-crystal: {
+    type: BasicBulletType
+    speed: 8.5
+    lifetime: 26
+    damage: 46
+    knockback: 1.8
+    width: 7
+    height: 12
+    frontColor: "ffffff"
+    backColor: "6ecdec"
+    status: freezing
+    statusDuration: 180
+  }
+  titanium: {
+    type: BasicBulletType
+    speed: 7.5
+    lifetime: 29
+    damage: 32
+    knockback: 1
+    width: 6
+    height: 10
+    frontColor: "ffffff"
+    backColor: "8da1e3"
+  }
+}
+requirements: [
+  copper/220
+  titanium/180
+  silicon/140
+  cryo-crystal/90
+  cryo-alloy/45
+]
+category: turret
+research: cyclone

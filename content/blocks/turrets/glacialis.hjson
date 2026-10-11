@@ -1,0 +1,73 @@
+type: ItemTurret
+name: "Glacialis"
+description: "A massive, ultra-long-range cryogenic railgun. Accelerates superconducting Cryo-Alloy hyper-slugs to hypersonic velocities, piercing clean through multiple armored titans and leaving a sub-zero wake."
+size: 4
+health: 3100
+range: 390
+reload: 110
+recoil: 5
+shake: 4
+shootSound: shootTitan
+targetAir: true
+targetGround: true
+inaccuracy: 0
+rotateSpeed: 1.8
+ammoTypes: {
+  cryo-alloy: {
+    type: BasicBulletType
+    speed: 18
+    lifetime: 22
+    damage: 1250
+    width: 14
+    height: 28
+    frontColor: "ffffff"
+    backColor: "78f3e5"
+    pierce: true
+    pierceCap: 8
+    pierceBuilding: true
+    status: freezing
+    statusDuration: 600
+    hitEffect: blastExplosion
+    despawnEffect: blastExplosion
+    shootEffect: shootBig
+    smokeEffect: shootBigSmoke
+  }
+  cryo-crystal: {
+    type: BasicBulletType
+    speed: 15
+    lifetime: 26
+    damage: 620
+    width: 11
+    height: 22
+    frontColor: "ffffff"
+    backColor: "6ecdec"
+    pierce: true
+    pierceCap: 4
+    status: freezing
+    statusDuration: 360
+    hitEffect: hitLancer
+  }
+  surge-alloy: {
+    type: BasicBulletType
+    speed: 16
+    lifetime: 25
+    damage: 850
+    width: 12
+    height: 24
+    frontColor: "ffffff"
+    backColor: "ffe664"
+    lightning: 5
+    lightningDamage: 60
+    lightningLength: 16
+  }
+}
+requirements: [
+  copper/380
+  titanium/280
+  silicon/260
+  surge-alloy/160
+  cryo-crystal/140
+  cryo-alloy/85
+]
+category: turret
+research: foreshadow

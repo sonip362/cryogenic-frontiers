@@ -1,0 +1,25 @@
+type: Wall
+name: "Large Cryo Wall"
+description: "A multi-layered cryogenic barricade. Deflects small projectiles and releases a massive freezing nova when breached."
+size: 2
+health: 2600
+chanceDeflect: 15
+flashHit: true
+destroyBulletSameTeam: true
+destroyBullet: {
+  type: BasicBulletType
+  instantDisappear: true
+  damage: 0
+  splashDamage: 120
+  splashDamageRadius: 72
+  status: freezing
+  statusDuration: 480
+  hitEffect: blastExplosion
+  despawnEffect: blastExplosion
+}
+requirements: [
+  titanium/24
+  cryo-crystal/24
+]
+category: defense
+research: cryo-wall

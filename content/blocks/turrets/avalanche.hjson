@@ -1,0 +1,70 @@
+type: ItemTurret
+name: "Avalanche"
+description: "A heavy guided missile platform. Launches long-range cryogenic torpedoes that actively track agile targets and burst into sub-zero cluster warheads."
+size: 3
+health: 1550
+range: 310
+reload: 48
+recoil: 2.5
+shootSound: missile
+targetAir: true
+targetGround: true
+inaccuracy: 4
+ammoTypes: {
+  cryo-alloy: {
+    type: MissileBulletType
+    speed: 4.8
+    lifetime: 65
+    damage: 280
+    splashDamage: 140
+    splashDamageRadius: 42
+    homingPower: 0.16
+    homingRange: 160
+    width: 12
+    height: 18
+    frontColor: "ffffff"
+    backColor: "78f3e5"
+    status: freezing
+    statusDuration: 420
+    fragBullets: 4
+    fragBullet: {
+      type: MissileBulletType
+      speed: 3.5
+      lifetime: 25
+      damage: 45
+      splashDamage: 30
+      splashDamageRadius: 20
+      homingPower: 0.2
+      homingRange: 100
+      frontColor: "ffffff"
+      backColor: "a9d8ff"
+      status: freezing
+      statusDuration: 180
+    }
+  }
+  cryo-crystal: {
+    type: MissileBulletType
+    speed: 4.2
+    lifetime: 74
+    damage: 160
+    splashDamage: 90
+    splashDamageRadius: 32
+    homingPower: 0.12
+    homingRange: 130
+    width: 10
+    height: 14
+    frontColor: "ffffff"
+    backColor: "6ecdec"
+    status: freezing
+    statusDuration: 260
+  }
+}
+requirements: [
+  lead/240
+  titanium/190
+  silicon/160
+  cryo-crystal/95
+  cryo-alloy/50
+]
+category: turret
+research: permafrost

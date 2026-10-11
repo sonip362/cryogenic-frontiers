@@ -1,0 +1,75 @@
+type: ItemTurret
+name: "Permafrost"
+description: "A heavy siege mortar firing volatile cryogenic shells. On detonation, bursts into a cluster of piercing frost fragments, crushing enemy formations."
+size: 3
+health: 1450
+range: 285
+reload: 65
+recoil: 3
+shake: 2
+shootSound: artillery
+targetAir: false
+targetGround: true
+inaccuracy: 3
+velocityRnd: 0.1
+ammoTypes: {
+  cryo-crystal: {
+    type: ArtilleryBulletType
+    speed: 3.5
+    lifetime: 81
+    damage: 130
+    splashDamage: 85
+    splashDamageRadius: 38
+    width: 14
+    height: 14
+    frontColor: "ffffff"
+    backColor: "6ecdec"
+    status: freezing
+    statusDuration: 360
+    hitEffect: blastExplosion
+    despawnEffect: blastExplosion
+    fragBullets: 8
+    fragBullet: {
+      type: BasicBulletType
+      speed: 4.5
+      damage: 22
+      lifetime: 18
+      width: 6
+      height: 9
+      frontColor: "ffffff"
+      backColor: "a9d8ff"
+      pierce: true
+      status: freezing
+      statusDuration: 180
+    }
+  }
+  graphite: {
+    type: ArtilleryBulletType
+    speed: 3.2
+    lifetime: 89
+    damage: 160
+    splashDamage: 65
+    splashDamageRadius: 30
+    width: 13
+    height: 13
+    frontColor: "ffffff"
+    backColor: "95abd9"
+    fragBullets: 4
+    fragBullet: {
+      type: BasicBulletType
+      speed: 4
+      damage: 18
+      lifetime: 15
+      width: 5
+      height: 8
+    }
+  }
+}
+requirements: [
+  copper/160
+  titanium/120
+  silicon/90
+  cryo-crystal/45
+]
+category: turret
+research: ripple

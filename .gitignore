@@ -1,0 +1,4 @@
+# Local guide and temporary test files
+guides.md
+*.zip
+.system_generated/
