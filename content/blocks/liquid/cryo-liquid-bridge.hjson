@@ -1,0 +1,14 @@
+name: "Cryo Liquid Bridge"
+description: "Transports fluids over terrain, structures, and conduits up to 5 tiles away via pressurized magnetic cryogenic tubes."
+type: LiquidBridge
+size: 1
+health: 120
+range: 5
+liquidCapacity: 30.0
+requirements: [
+  metaglass/8
+  titanium/6
+  cryo-crystal/5
+]
+category: liquid
+research: cryo-liquid-junction

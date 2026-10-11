@@ -1,0 +1,13 @@
+name: "Cryo Router"
+description: "Evenly splits incoming items in three directions. Enhanced with a cryogenic frictionless manifold to prevent item stalling."
+type: Router
+size: 1
+health: 110
+speed: 8.0
+requirements: [
+  copper/3
+  titanium/3
+  cryo-crystal/2
+]
+category: distribution
+research: cryo-conveyor

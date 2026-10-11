@@ -1,0 +1,15 @@
+name: "Cryo Bridge"
+description: "Transports items over terrain, structures, and belts up to a distance of 5 tiles. Cryogenic magnetic rails provide accelerated flight times."
+type: ItemBridge
+size: 1
+health: 120
+range: 5
+transportTime: 3.5
+bufferCapacity: 20
+requirements: [
+  titanium/6
+  lead/6
+  cryo-crystal/4
+]
+category: distribution
+research: cryo-junction

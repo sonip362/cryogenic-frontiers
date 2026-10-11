@@ -1,0 +1,24 @@
+name: "Cryo Freezer"
+description: "Refrigerates regular water into Chilled Water using compressed cryogenic coolant loops. Produces an efficient and scalable coolant for weapons and factories."
+type: GenericCrafter
+size: 2
+health: 240
+hasPower: true
+hasLiquids: true
+liquidCapacity: 30.0
+craftTime: 40.0
+consumes: {
+  power: 1.5
+  liquids: [
+    water/0.2
+  ]
+}
+outputLiquid: chilled-water/0.2
+requirements: [
+  lead/50
+  silicon/40
+  titanium/35
+  cryo-crystal/20
+]
+category: crafting
+research: cryo-crystallizer

@@ -1,0 +1,12 @@
+name: "Chilled Water"
+description: "Water supercooled near its freezing point. Absorbs heat significantly faster than ordinary water, acting as an efficient and readily accessible coolant for weapons and machinery."
+temperature: 0.18
+heatCapacity: 0.75
+viscosity: 0.45
+flammability: 0.0
+explosiveness: 0.0
+coolant: true
+color: "8ce6ff"
+gasColor: "d1f7ff"
+effect: "freezing"
+research: water

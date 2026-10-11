@@ -7,12 +7,14 @@ Unlocks the untapped potential of Cryofluid with solid Cryo-Crystals, sub-zero w
 
 Features:
 - New Materials: Cryo-Crystal, Cryo-Alloy (superconducting cryogenic alloy)
-- New Production: Cryo-Crystallizer, Industrial Cryo-Crystallizer (3x3 high-yield batch crafter), Cryo-Alloy Foundry
+- New Logistics (Solid): Cryo Conveyor (balanced low-friction belt), Cryo Router, Distributor (2x2), Junction, Bridge
+- New Logistics (Liquid): Cryo Conduit (super-insulated duct, solidifies slag), Liquid Router, Tank (2x2), Liquid Junction, Liquid Bridge
+- New Production & Coolant: Cryo-Crystallizer, Industrial Cryo-Crystallizer, Cryo-Alloy Foundry, Cryo Freezer (produces Chilled Water universal turret coolant)
 - New Drills: Cryo Drill (3x3 rapid subzero drill), Titan Drill (5x5 colossal tier-5 excavator)
-- New Turrets: Frostbite (rapid shard gun), Permafrost (cluster mortar), Absolute Zero (piercing cryo-laser), Glacialis (4x4 railgun), Blizzard (rotary cannon), Avalanche (guided torpedo battery)
-- New Power: Thermo-Stirling Engine (450 power/s), Zero-Point Cryo-Reactor (3,600 power/s)
-- New Defense: Cryo Wall & Large Cryo Wall (reactive freeze blast upon destruction)
+- New Turrets: Frostbite, Permafrost, Absolute Zero, Glacialis, Blizzard, Avalanche
+- New Power & Defense: Thermo-Stirling Engine, Zero-Point Cryo-Reactor, Cryo Walls
+- New Units & Command: Cryo Unit Factory, Boreas assault interceptor, Core: Frost with Frost Alpha starting unit
 '''
-version: "1.3.0"
+version: "1.4.0"
 minGameVersion: "136"
 hidden: false

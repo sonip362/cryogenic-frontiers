@@ -1,0 +1,40 @@
+name: "Boreas"
+description: "An agile cryogenic assault interceptor. Fires high-velocity freeze bolts that slow and damage enemy units."
+type: flying
+flying: true
+health: 420
+armor: 3
+speed: 2.6
+accel: 0.08
+drag: 0.04
+hitSize: 11
+engineOffset: 6.5
+engineSize: 2.5
+engineColor: "84f3ff"
+targetAir: true
+targetGround: true
+weapons: [
+  {
+    x: 4.5
+    y: 1.5
+    reload: 18
+    alternate: true
+    ejectEffect: none
+    shootSound: pew
+    bullet: {
+      type: BasicBulletType
+      speed: 4.5
+      damage: 18
+      lifetime: 40
+      width: 6.5
+      height: 9
+      frontColor: "ffffff"
+      backColor: "8ce6ff"
+      status: "freezing"
+      statusDuration: 120
+      hitEffect: hitLaser
+      despawnEffect: hitLaser
+    }
+  }
+]
+research: cryo-unit-factory

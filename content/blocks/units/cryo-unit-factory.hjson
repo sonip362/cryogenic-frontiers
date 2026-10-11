@@ -1,0 +1,28 @@
+name: "Cryo Unit Factory"
+description: "Manufactures advanced cryogenic combat units. Assembles reinforced airframes and components infused with Cryo-Crystals."
+type: UnitFactory
+size: 3
+health: 450
+hasPower: true
+consumes: {
+  power: 2.5
+}
+plans: [
+  {
+    unit: boreas
+    time: 900
+    requirements: [
+      silicon/25
+      titanium/20
+      cryo-crystal/15
+    ]
+  }
+]
+requirements: [
+  silicon/80
+  titanium/70
+  cryo-crystal/40
+  cryo-alloy/25
+]
+category: units
+research: ground-factory

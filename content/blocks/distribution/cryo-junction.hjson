@@ -1,0 +1,13 @@
+name: "Cryo Junction"
+description: "Crosses two perpendicular conveyor belts without item mixing. Features supercooled low-friction tunnels for rapid passage."
+type: Junction
+size: 1
+health: 100
+speed: 28.0
+capacity: 8
+requirements: [
+  titanium/2
+  cryo-crystal/2
+]
+category: distribution
+research: cryo-conveyor

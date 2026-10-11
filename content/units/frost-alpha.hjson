@@ -1,0 +1,46 @@
+name: "Frost Alpha"
+description: "A cryogenic starting core unit. Upgraded with sub-zero mining emitters and rapid construction beams. Mines faster, builds quicker, and defends itself with chilling energy bolts."
+type: flying
+flying: true
+coreUnitDock: true
+controller: BuilderAI
+isEnemy: false
+health: 220
+armor: 1
+speed: 3.4
+accel: 0.12
+drag: 0.05
+mineSpeed: 7.0
+mineTier: 2
+buildSpeed: 0.8
+itemCapacity: 40
+hitSize: 8
+engineOffset: 6.0
+engineSize: 2.0
+engineColor: "73ffee"
+targetAir: true
+targetGround: true
+weapons: [
+  {
+    x: 3.0
+    y: 2.0
+    reload: 15
+    alternate: true
+    ejectEffect: none
+    shootSound: pew
+    bullet: {
+      type: BasicBulletType
+      speed: 3.8
+      damage: 12
+      lifetime: 42
+      width: 5.5
+      height: 8.0
+      frontColor: "ffffff"
+      backColor: "73ffee"
+      status: "freezing"
+      statusDuration: 90
+      hitEffect: hitLaser
+      despawnEffect: hitLaser
+    }
+  }
+]

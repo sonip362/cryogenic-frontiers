@@ -1,0 +1,13 @@
+name: "Cryo Distributor"
+description: "A large 2x2 multi-directional distributor. Splits incoming items evenly across all adjacent outputs using a refrigerated sorting core."
+type: Router
+size: 2
+health: 240
+speed: 8.0
+requirements: [
+  titanium/8
+  silicon/6
+  cryo-crystal/6
+]
+category: distribution
+research: cryo-router

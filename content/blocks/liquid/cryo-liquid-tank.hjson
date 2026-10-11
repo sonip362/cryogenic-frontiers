@@ -1,0 +1,13 @@
+name: "Cryo Liquid Tank"
+description: "A compact 2x2 cryogenic reservoir. Stores large volumes of liquids under vacuum refrigeration."
+type: LiquidRouter
+size: 2
+health: 350
+liquidCapacity: 800.0
+requirements: [
+  metaglass/25
+  titanium/20
+  cryo-crystal/15
+]
+category: liquid
+research: cryo-liquid-router

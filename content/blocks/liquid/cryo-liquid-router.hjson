@@ -1,0 +1,12 @@
+name: "Cryo Liquid Router"
+description: "Evenly distributes liquids to surrounding blocks. Insulated with cryo-crystals to maintain fluid temperature and avoid pressure loss."
+type: LiquidRouter
+size: 1
+health: 120
+liquidCapacity: 30.0
+requirements: [
+  metaglass/4
+  cryo-crystal/3
+]
+category: liquid
+research: cryo-conduit

@@ -1,0 +1,13 @@
+name: "Cryo Conveyor"
+description: "A low-friction cryogenic conveyor belt. Infused with Cryo-Crystals to reduce friction, allowing items to slide faster than standard belts while maintaining low power and build overhead."
+type: Conveyor
+health: 95
+speed: 0.09
+displayedSpeed: 12.2
+requirements: [
+  lead/1
+  titanium/1
+  cryo-crystal/1
+]
+category: distribution
+research: titanium-conveyor

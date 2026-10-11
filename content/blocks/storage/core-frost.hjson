@@ -1,0 +1,17 @@
+name: "Core: Frost"
+description: "Primary command center for cryogenic expeditionary forces. Stores materials and spawns the Frost Alpha builder unit. Heavily armored and reinforced with cryogenic plating."
+type: CoreBlock
+size: 3
+health: 1600
+itemCapacity: 4000
+unitType: "frost-alpha"
+unitCapModifier: 8
+thrusterLength: 10.0
+isFirstTier: true
+requirements: [
+  copper/1000
+  lead/800
+  cryo-crystal/300
+]
+category: effect
+research: core-shard
