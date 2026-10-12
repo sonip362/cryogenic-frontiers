@@ -1,0 +1,12 @@
+planet: nivalis
+sector: 44
+difficulty: 4
+
+localizedName: Glacial Citadel
+description: The planetary hostile command bastion on Nivalis. Features 2 heavily fortified enemy cores protected by heavy bastions, turrets, and automated unit production. Infiltrate and eradicate both enemy command cores to secure planetary dominance.
+
+research: subzero-crags
+attackAfterWaves: false
+allowLaunchLoadout: false
+allowLaunchSchematics: false
+showSectorLandInfo: true

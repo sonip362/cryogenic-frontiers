@@ -1,0 +1,64 @@
+localizedName: Nivalis
+description: A sub-zero terrestrial world enveloped in perpetual blizzards and glacial permafrost. Rich in volatile cryo-hydrocarbons, dense metallic ores, and crystalline minerals.
+parent: sun
+solarSystem: sun
+
+radius: 1.0
+orbitRadius: 28.0
+orbitTime: 480.0
+rotateTime: 30.0
+
+accessible: true
+alwaysUnlocked: true
+defaultCore: core-frost
+sectorSize: 1
+clearSectorOnLose: true
+allowSectorInvasion: false
+allowLaunchToOther: false
+allowLaunchLoadout: false
+allowLaunchSchematics: false
+
+iconColor: 5ce3e6
+hasAtmosphere: true
+atmosphereColor: 4ca2cd
+atmosphereRadIn: 0.03
+atmosphereRadOut: 0.35
+
+itemWhitelist: [
+  glacite
+  cryo-shale
+  boreonite
+  polar-quartz
+  subzero-silicon
+  cryo-glass
+  cryo-crystal
+  cryo-alloy
+]
+
+mesh: {
+  type: NoiseMesh
+  planet: nivalis
+  seed: 582
+  divisions: 4
+  color1: 285078
+  color2: 8ae0f4
+  radius: 0.95
+  octaves: 4
+  persistence: 0.55
+  scale: 1.1
+  mag: 1.3
+}
+
+cloudMesh: {
+  type: HexSkyMesh
+  planet: nivalis
+  seed: 114
+  speed: 1.2
+  divisions: 4
+  radius: 0.12
+  color: d6f7ff66
+  octaves: 3
+  persistence: 0.7
+  scale: 0.18
+  thresh: 0.45
+}

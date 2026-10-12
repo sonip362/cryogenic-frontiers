@@ -1,0 +1,5 @@
+type: StaticWall
+name: Frost Stone Wall
+description: Impassable mountain wall of frozen bedrock.
+variants: 0
+solid: true

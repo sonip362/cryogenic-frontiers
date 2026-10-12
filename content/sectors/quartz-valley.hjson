@@ -1,0 +1,12 @@
+planet: nivalis
+sector: 12
+difficulty: 2
+captureWave: 25
+
+localizedName: Quartz Valley
+description: High-altitude glacial rift dense with pure Polar Quartz crystal outcroppings and subterranean Boreonite deposits. Establish semiconductor and tempered glass refining outposts.
+
+research: boreal-basin
+allowLaunchLoadout: false
+allowLaunchSchematics: false
+showSectorLandInfo: true

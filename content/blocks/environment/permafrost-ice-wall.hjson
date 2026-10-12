@@ -1,0 +1,5 @@
+type: StaticWall
+name: Permafrost Ice Wall
+description: Impassable glacial cliff composed of solid ancient ice.
+variants: 0
+solid: true
