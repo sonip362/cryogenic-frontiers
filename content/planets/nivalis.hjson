@@ -3,6 +3,8 @@ description: A sub-zero terrestrial world enveloped in perpetual blizzards and g
 parent: sun
 solarSystem: sun
 
+generator: SerpuloPlanetGenerator
+
 radius: 1.0
 orbitRadius: 28.0
 orbitTime: 480.0
@@ -11,7 +13,8 @@ rotateTime: 30.0
 accessible: true
 alwaysUnlocked: true
 defaultCore: core-frost
-sectorSize: 1
+sectorSize: 2
+startSector: 0
 clearSectorOnLose: true
 allowSectorInvasion: false
 allowLaunchToOther: false
