@@ -1,0 +1,13 @@
+type: Wall
+name: "Large Shielded Cryo Wall"
+description: "A colossal superconducting bastion composed of thick Cryo-Alloy composites. Deflects heavy caliber rounds and withstands extreme frontal assault."
+size: 2
+health: 4800
+armor: 14
+chanceDeflect: 30
+flashHit: true
+requirements: [
+  cryo-alloy/24
+]
+category: defense
+research: shielded-cryo-wall

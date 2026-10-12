@@ -2,19 +2,20 @@ name: "cryogenic-frontiers"
 displayName: "[#6ecdec]Cryogenic Frontiers[]"
 author: "sonip362"
 description: '''
-A cryogenic technology expansion mod for Mindustry.
-Unlocks the untapped potential of Cryofluid with solid Cryo-Crystals, sub-zero weaponry, thermodynamic stirling power generators, and reactive freezing fortifications.
+A complete standalone cryogenic technology ecosystem and expansion for Mindustry.
+100% self-contained: features zero dependencies on vanilla resources, ammo, or crafting trees.
 
 Features:
-- New Materials: Cryo-Crystal, Cryo-Alloy (superconducting cryogenic alloy)
-- New Logistics (Solid): Cryo Conveyor (balanced low-friction belt), Cryo Router, Distributor (2x2), Junction, Bridge
-- New Logistics (Liquid): Cryo Conduit (super-insulated duct, solidifies slag), Liquid Router, Tank (2x2), Liquid Junction, Liquid Bridge
-- New Production & Coolant: Cryo-Crystallizer, Industrial Cryo-Crystallizer, Cryo-Alloy Foundry, Cryo Freezer (produces Chilled Water universal turret coolant)
-- New Drills: Cryo Drill (3x3 rapid subzero drill), Titan Drill (5x5 colossal tier-5 excavator)
-- New Turrets: Frostbite, Permafrost, Absolute Zero, Glacialis, Blizzard, Avalanche
-- New Power & Defense: Thermo-Stirling Engine, Zero-Point Cryo-Reactor, Cryo Walls
-- New Units & Command: Cryo Unit Factory, Boreas assault interceptor, Core: Frost with Frost Alpha starting unit
+- Natural Ores: Glacite (dense structural metal), Cryo-Shale (ballistic mineral), Boreonite (volatile fuel), Polar Quartz (glacial silica)
+- Intermediate Refineries: Cryo-Synthesizer (Subzero Silicon), Cryo-Glass Kiln (Cryo-Glass), Cryo-Freezer (Chilled Water)
+- Advanced Materials: Cryo-Crystal, Cryo-Alloy (superconducting composite)
+- Expanded Fortifications: Glacite Walls (T1), Cryo Walls (T2 reactive freeze nova), Shielded Cryo Walls (T3 deflecting superconducting armor)
+- Logistics Suite: Cryo Conveyors, Routers, Distributors, Junctions, Bridges & Cryo Conduits, Liquid Routers, Tanks, Liquid Junctions, Liquid Bridges
+- Heavy Turrets: Frostbite, Permafrost, Absolute Zero, Glacialis Railgun, Blizzard Rotary Cannon, Avalanche Torpedo Launcher
+- Power: Thermo-Stirling Engine (Boreonite fuel), Zero-Point Cryo-Reactor
+- Units & Command: Cryo Unit Factory, Boreas interceptor, Core: Frost with Frost Alpha mining builder unit
+- Next-Gen Remaster: All sprites upgraded with modern v7 directional lighting, chamfered armor plates, and emissive cores.
 '''
-version: "1.4.0"
+version: "2.0.0"
 minGameVersion: "136"
 hidden: false

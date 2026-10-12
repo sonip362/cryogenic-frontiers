@@ -6,9 +6,9 @@ health: 120
 range: 5
 liquidCapacity: 30.0
 requirements: [
-  metaglass/8
-  titanium/6
-  cryo-crystal/5
+  cryo-glass/8
+  glacite/6
+  subzero-silicon/4
 ]
 category: liquid
 research: cryo-liquid-junction

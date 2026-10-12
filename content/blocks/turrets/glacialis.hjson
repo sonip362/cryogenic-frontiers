@@ -47,27 +47,12 @@ ammoTypes: {
     statusDuration: 360
     hitEffect: hitLancer
   }
-  surge-alloy: {
-    type: BasicBulletType
-    speed: 16
-    lifetime: 25
-    damage: 850
-    width: 12
-    height: 24
-    frontColor: "ffffff"
-    backColor: "ffe664"
-    lightning: 5
-    lightningDamage: 60
-    lightningLength: 16
-  }
 }
 requirements: [
-  copper/380
-  titanium/280
-  silicon/260
-  surge-alloy/160
+  glacite/320
+  subzero-silicon/240
   cryo-crystal/140
   cryo-alloy/85
 ]
 category: turret
-research: foreshadow
+research: permafrost

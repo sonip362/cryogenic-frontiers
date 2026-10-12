@@ -1,0 +1,10 @@
+type: Wall
+name: "Glacite Wall"
+description: "A solid perimeter wall forged from Glacite plates. Protects vulnerable base structures from light projectile impacts."
+size: 1
+health: 440
+requirements: [
+  glacite/6
+]
+category: defense
+research: core-frost

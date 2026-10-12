@@ -1,0 +1,7 @@
+name: "Polar Quartz"
+description: "High-purity glacial silica crystal extracted from permafrost veins. Essential precursor for synthesis into microchips and reinforced glassware."
+type: material
+hardness: 2
+cost: 1.1
+color: "b2e8f7"
+research: core-frost

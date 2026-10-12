@@ -1,6 +1,6 @@
 type: Drill
 name: "Cryo Drill"
-description: "A supercooled rotary mining drill. Employs cryogenic fracturing to extract ores rapidly with minimal thermal wear. Highly responsive to cryofluid cooling boost."
+description: "A supercooled rotary mining drill. Employs cryogenic fracturing to extract ores rapidly with minimal thermal wear. Can be boosted with Chilled Water."
 size: 3
 tier: 4
 drillTime: 200
@@ -11,19 +11,17 @@ drawMineItem: true
 hasPower: true
 hasLiquids: true
 consumes: {
-  power: 1.8
+  power: 1.2
   liquid: {
-    liquid: cryofluid
+    liquid: chilled-water
     amount: 0.08
     optional: true
     booster: true
   }
 }
 requirements: [
-  copper/80
-  titanium/70
-  silicon/50
-  cryo-crystal/30
+  glacite/50
+  cryo-shale/35
 ]
 category: production
-research: laser-drill
+research: core-frost

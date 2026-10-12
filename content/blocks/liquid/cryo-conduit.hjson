@@ -1,5 +1,5 @@
 name: "Cryo Conduit"
-description: "A super-insulated cryogenic fluid duct. Transports water, cryofluid, and chilled water at elevated velocity and pressure without leaks. Does not accept side liquid inputs. Molten lava or slag will undergo extreme thermal shock and solidify, freezing the flow inside."
+description: "A super-insulated cryogenic fluid duct forged from Cryo-Glass and Glacite. Transports liquids at elevated velocity and pressure without leaks. Does not accept side liquid inputs."
 type: ArmoredConduit
 health: 120
 liquidCapacity: 16.0
@@ -7,9 +7,8 @@ liquidPressure: 1.25
 leaks: false
 botColor: "365268"
 requirements: [
-  metaglass/1
-  titanium/1
-  cryo-crystal/1
+  cryo-glass/1
+  glacite/1
 ]
 category: liquid
-research: pulse-conduit
+research: cryo-glass-kiln

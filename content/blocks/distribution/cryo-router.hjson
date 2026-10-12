@@ -5,9 +5,8 @@ size: 1
 health: 110
 speed: 8.0
 requirements: [
-  copper/3
-  titanium/3
-  cryo-crystal/2
+  glacite/3
+  cryo-shale/2
 ]
 category: distribution
 research: cryo-conveyor

@@ -1,0 +1,5 @@
+name: "Cryo-Glass"
+description: "Supercooled, high-tensile insulated glass forged from Polar Quartz and Glacite. Highly resistant to extreme pressure and cryogenic liquid erosion."
+cost: 1.5
+color: "c5f4fa"
+research: cryo-glass-kiln

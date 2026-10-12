@@ -12,6 +12,30 @@ targetGround: true
 inaccuracy: 6
 velocityRnd: 0.15
 ammoTypes: {
+  glacite: {
+    type: BasicBulletType
+    speed: 7.5
+    lifetime: 29
+    damage: 34
+    knockback: 1.2
+    width: 6
+    height: 10
+    frontColor: "ffffff"
+    backColor: "7294b8"
+  }
+  cryo-crystal: {
+    type: BasicBulletType
+    speed: 8.5
+    lifetime: 26
+    damage: 46
+    knockback: 1.8
+    width: 7
+    height: 12
+    frontColor: "ffffff"
+    backColor: "6ecdec"
+    status: freezing
+    statusDuration: 180
+  }
   cryo-alloy: {
     type: BasicBulletType
     speed: 9
@@ -40,37 +64,12 @@ ammoTypes: {
       statusDuration: 120
     }
   }
-  cryo-crystal: {
-    type: BasicBulletType
-    speed: 8.5
-    lifetime: 26
-    damage: 46
-    knockback: 1.8
-    width: 7
-    height: 12
-    frontColor: "ffffff"
-    backColor: "6ecdec"
-    status: freezing
-    statusDuration: 180
-  }
-  titanium: {
-    type: BasicBulletType
-    speed: 7.5
-    lifetime: 29
-    damage: 32
-    knockback: 1
-    width: 6
-    height: 10
-    frontColor: "ffffff"
-    backColor: "8da1e3"
-  }
 }
 requirements: [
-  copper/220
-  titanium/180
-  silicon/140
-  cryo-crystal/90
-  cryo-alloy/45
+  glacite/200
+  cryo-shale/160
+  subzero-silicon/120
+  cryo-crystal/75
 ]
 category: turret
-research: cyclone
+research: frostbite

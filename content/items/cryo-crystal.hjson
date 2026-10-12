@@ -1,5 +1,5 @@
 name: "Cryo-Crystal"
-description: "A dense, supercooled crystalline matrix synthesized by pressurizing cryofluid with titanium and silicon. Emits an intense sub-zero field."
+description: "A dense, supercooled crystalline matrix synthesized by crystallizing Polar Quartz and Boreonite with Chilled Water. Emits an intense sub-zero field."
 cost: 2.0
 color: "6ecdec"
 flammability: -0.6
@@ -7,4 +7,4 @@ explosiveness: 0.0
 radioactivity: 0.0
 charge: 0.15
 hardness: 3
-research: titanium
+research: cryo-crystallizer

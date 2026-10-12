@@ -1,0 +1,24 @@
+type: GenericCrafter
+name: "Cryo-Glass Kiln"
+description: "Fuses Polar Quartz and Glacite under cryogenic vacuum compression into high-tensile insulated Cryo-Glass."
+size: 2
+health: 360
+hasPower: true
+hasItems: true
+itemCapacity: 20
+craftTime: 45
+consumes: {
+  power: 1.0
+  items: [
+    polar-quartz/2
+    glacite/1
+  ]
+}
+outputItem: cryo-glass/1
+craftEffect: vapor
+category: crafting
+research: core-frost
+requirements: [
+  glacite/35
+  cryo-shale/25
+]

@@ -1,13 +1,12 @@
 name: "Cryo Liquid Junction"
-description: "Allows two perpendicular liquid pipelines to cross without mixing. Reinforced with cryogenic seals."
+description: "Allows two perpendicular liquid pipelines to cross without mixing. Reinforced with Cryo-Glass and Glacite seals."
 type: LiquidJunction
 size: 1
 health: 120
 liquidCapacity: 25.0
 requirements: [
-  metaglass/4
-  titanium/3
-  cryo-crystal/2
+  cryo-glass/4
+  glacite/3
 ]
 category: liquid
 research: cryo-conduit

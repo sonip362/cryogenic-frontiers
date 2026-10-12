@@ -35,10 +35,10 @@ consumes: {
   }
 }
 requirements: [
-  lead/140
-  titanium/110
-  silicon/95
+  glacite/130
+  cryo-shale/110
+  subzero-silicon/85
   cryo-crystal/60
 ]
 category: turret
-research: lancer
+research: frostbite

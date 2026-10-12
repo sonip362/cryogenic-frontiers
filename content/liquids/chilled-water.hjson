@@ -1,5 +1,5 @@
 name: "Chilled Water"
-description: "Water supercooled near its freezing point. Absorbs heat significantly faster than ordinary water, acting as an efficient and readily accessible coolant for weapons and machinery."
+description: "Water supercooled near its freezing point. Absorbs heat significantly faster than ordinary coolant, acting as an efficient coolant for weapons and machinery."
 temperature: 0.18
 heatCapacity: 0.75
 viscosity: 0.45
@@ -9,4 +9,4 @@ coolant: true
 color: "8ce6ff"
 gasColor: "d1f7ff"
 effect: "freezing"
-research: water
+research: core-frost

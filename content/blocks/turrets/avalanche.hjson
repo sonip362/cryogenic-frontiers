@@ -11,6 +11,40 @@ targetAir: true
 targetGround: true
 inaccuracy: 4
 ammoTypes: {
+  boreonite: {
+    type: MissileBulletType
+    speed: 4.5
+    lifetime: 70
+    damage: 180
+    splashDamage: 110
+    splashDamageRadius: 36
+    homingPower: 0.14
+    homingRange: 140
+    width: 10
+    height: 15
+    frontColor: "ffffff"
+    backColor: "4be3b0"
+    status: freezing
+    statusDuration: 300
+    hitEffect: blastExplosion
+    despawnEffect: blastExplosion
+  }
+  cryo-crystal: {
+    type: MissileBulletType
+    speed: 4.2
+    lifetime: 74
+    damage: 160
+    splashDamage: 90
+    splashDamageRadius: 32
+    homingPower: 0.12
+    homingRange: 130
+    width: 10
+    height: 14
+    frontColor: "ffffff"
+    backColor: "6ecdec"
+    status: freezing
+    statusDuration: 260
+  }
   cryo-alloy: {
     type: MissileBulletType
     speed: 4.8
@@ -42,29 +76,13 @@ ammoTypes: {
       statusDuration: 180
     }
   }
-  cryo-crystal: {
-    type: MissileBulletType
-    speed: 4.2
-    lifetime: 74
-    damage: 160
-    splashDamage: 90
-    splashDamageRadius: 32
-    homingPower: 0.12
-    homingRange: 130
-    width: 10
-    height: 14
-    frontColor: "ffffff"
-    backColor: "6ecdec"
-    status: freezing
-    statusDuration: 260
-  }
 }
 requirements: [
-  lead/240
-  titanium/190
-  silicon/160
-  cryo-crystal/95
-  cryo-alloy/50
+  glacite/190
+  cryo-shale/160
+  subzero-silicon/120
+  cryo-crystal/75
+  cryo-alloy/40
 ]
 category: turret
 research: permafrost

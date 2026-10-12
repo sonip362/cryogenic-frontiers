@@ -1,0 +1,5 @@
+name: "Subzero Silicon"
+description: "A precision cryogenic semiconductor crystal forged by purifying Polar Quartz with Cryo-Shale. Powers advanced logic boards and autonomous drone navigation."
+cost: 1.5
+color: "7aa4c0"
+research: cryo-synthesizer

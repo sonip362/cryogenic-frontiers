@@ -1,0 +1,13 @@
+type: Wall
+name: "Shielded Cryo Wall"
+description: "A high-tier superconducting defense wall forged from Cryo-Alloy plates. Boasts extreme structural durability, high inherent armor, and a high probability to deflect enemy projectiles."
+size: 1
+health: 1200
+armor: 14
+chanceDeflect: 25
+flashHit: true
+requirements: [
+  cryo-alloy/6
+]
+category: defense
+research: cryo-wall

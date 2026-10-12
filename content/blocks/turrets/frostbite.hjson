@@ -1,6 +1,6 @@
 type: ItemTurret
 name: "Frostbite"
-description: "A rapid-firing cryogenic rail turret. Shoots piercing sub-zero crystal shards that inflict freezing status on ground and aerial targets."
+description: "A rapid-firing cryogenic rail turret. Shoots piercing sub-zero crystal shards or dense shale rounds that inflict freezing status on ground and aerial targets."
 size: 2
 health: 780
 range: 195
@@ -11,10 +11,38 @@ targetAir: true
 targetGround: true
 inaccuracy: 1
 ammoTypes: {
+  cryo-shale: {
+    type: BasicBulletType
+    speed: 6.5
+    damage: 30
+    lifetime: 30
+    width: 6
+    height: 10
+    frontColor: "ffffff"
+    backColor: "546a85"
+    pierce: true
+    pierceCap: 1
+    shootEffect: shootSmall
+    smokeEffect: shootSmallSmoke
+  }
+  subzero-silicon: {
+    type: BasicBulletType
+    speed: 6.8
+    damage: 32
+    lifetime: 29
+    width: 6
+    height: 9
+    homingPower: 0.1
+    homingRange: 70
+    frontColor: "ffffff"
+    backColor: "7aa4c0"
+    shootEffect: shootSmall
+    smokeEffect: shootSmallSmoke
+  }
   cryo-crystal: {
     type: BasicBulletType
     speed: 7.5
-    damage: 42
+    damage: 46
     lifetime: 26
     width: 7
     height: 12
@@ -28,39 +56,11 @@ ammoTypes: {
     smokeEffect: shootSmallSmoke
     hitEffect: hitLancer
   }
-  titanium: {
-    type: BasicBulletType
-    speed: 6.0
-    damage: 28
-    lifetime: 32
-    width: 6
-    height: 10
-    frontColor: "ffffff"
-    backColor: "8da1e3"
-    pierce: true
-    pierceCap: 1
-    shootEffect: shootSmall
-    smokeEffect: shootSmallSmoke
-  }
-  silicon: {
-    type: BasicBulletType
-    speed: 6.5
-    damage: 25
-    lifetime: 30
-    width: 6
-    height: 9
-    homingPower: 0.08
-    homingRange: 60
-    frontColor: "ffffff"
-    backColor: "535661"
-    shootEffect: shootSmall
-    smokeEffect: shootSmallSmoke
-  }
 }
 requirements: [
-  copper/85
-  titanium/60
-  silicon/45
+  glacite/70
+  cryo-shale/50
+  subzero-silicon/30
 ]
 category: turret
-research: salvo
+research: core-frost

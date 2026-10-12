@@ -2,7 +2,7 @@ type: Wall
 name: "Cryo Wall"
 description: "A fortified defense wall infused with Cryo-Crystals. Cools incoming heat and erupts in a sub-zero freeze shockwave when destroyed, neutralizing nearby attackers."
 size: 1
-health: 650
+health: 720
 chanceDeflect: 10
 flashHit: true
 destroyBulletSameTeam: true
@@ -10,7 +10,7 @@ destroyBullet: {
   type: BasicBulletType
   instantDisappear: true
   damage: 0
-  splashDamage: 45
+  splashDamage: 55
   splashDamageRadius: 40
   status: freezing
   statusDuration: 300
@@ -18,8 +18,8 @@ destroyBullet: {
   despawnEffect: blastExplosion
 }
 requirements: [
-  titanium/6
+  glacite/6
   cryo-crystal/6
 ]
 category: defense
-research: titanium-wall
+research: glacite-wall

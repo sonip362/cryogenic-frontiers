@@ -6,8 +6,8 @@ health: 100
 speed: 28.0
 capacity: 8
 requirements: [
-  titanium/2
-  cryo-crystal/2
+  glacite/3
+  cryo-shale/2
 ]
 category: distribution
 research: cryo-conveyor

@@ -5,9 +5,9 @@ size: 2
 health: 240
 speed: 8.0
 requirements: [
-  titanium/8
-  silicon/6
-  cryo-crystal/6
+  glacite/8
+  cryo-shale/6
+  subzero-silicon/4
 ]
 category: distribution
 research: cryo-router

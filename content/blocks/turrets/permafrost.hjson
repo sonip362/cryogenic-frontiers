@@ -1,6 +1,6 @@
 type: ItemTurret
 name: "Permafrost"
-description: "A heavy siege mortar firing volatile cryogenic shells. On detonation, bursts into a cluster of piercing frost fragments, crushing enemy formations."
+description: "A heavy siege mortar firing volatile cryogenic shells. Detonates on impact into a cluster of piercing frost fragments, crushing enemy formations."
 size: 3
 health: 1450
 range: 285
@@ -13,11 +13,38 @@ targetGround: true
 inaccuracy: 3
 velocityRnd: 0.1
 ammoTypes: {
+  boreonite: {
+    type: ArtilleryBulletType
+    speed: 3.4
+    lifetime: 84
+    damage: 155
+    splashDamage: 90
+    splashDamageRadius: 42
+    width: 13
+    height: 13
+    frontColor: "ffffff"
+    backColor: "4be3b0"
+    status: freezing
+    statusDuration: 240
+    hitEffect: blastExplosion
+    despawnEffect: blastExplosion
+    fragBullets: 5
+    fragBullet: {
+      type: BasicBulletType
+      speed: 4.2
+      damage: 20
+      lifetime: 16
+      width: 5
+      height: 8
+      frontColor: "ffffff"
+      backColor: "4be3b0"
+    }
+  }
   cryo-crystal: {
     type: ArtilleryBulletType
     speed: 3.5
     lifetime: 81
-    damage: 130
+    damage: 135
     splashDamage: 85
     splashDamageRadius: 38
     width: 14
@@ -32,7 +59,7 @@ ammoTypes: {
     fragBullet: {
       type: BasicBulletType
       speed: 4.5
-      damage: 22
+      damage: 24
       lifetime: 18
       width: 6
       height: 9
@@ -43,33 +70,12 @@ ammoTypes: {
       statusDuration: 180
     }
   }
-  graphite: {
-    type: ArtilleryBulletType
-    speed: 3.2
-    lifetime: 89
-    damage: 160
-    splashDamage: 65
-    splashDamageRadius: 30
-    width: 13
-    height: 13
-    frontColor: "ffffff"
-    backColor: "95abd9"
-    fragBullets: 4
-    fragBullet: {
-      type: BasicBulletType
-      speed: 4
-      damage: 18
-      lifetime: 15
-      width: 5
-      height: 8
-    }
-  }
 }
 requirements: [
-  copper/160
-  titanium/120
-  silicon/90
+  glacite/140
+  cryo-shale/110
+  subzero-silicon/70
   cryo-crystal/45
 ]
 category: turret
-research: ripple
+research: frostbite

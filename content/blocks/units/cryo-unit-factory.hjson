@@ -12,17 +12,17 @@ plans: [
     unit: boreas
     time: 900
     requirements: [
-      silicon/25
-      titanium/20
+      subzero-silicon/25
+      glacite/20
       cryo-crystal/15
     ]
   }
 ]
 requirements: [
-  silicon/80
-  titanium/70
+  glacite/90
+  subzero-silicon/80
   cryo-crystal/40
   cryo-alloy/25
 ]
 category: units
-research: ground-factory
+research: core-frost

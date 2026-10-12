@@ -1,0 +1,24 @@
+type: GenericCrafter
+name: "Cryo-Synthesizer"
+description: "Refines Polar Quartz and Cryo-Shale into Subzero Silicon semiconductor crystals for advanced electronics and circuitry."
+size: 2
+health: 380
+hasPower: true
+hasItems: true
+itemCapacity: 20
+craftTime: 40
+consumes: {
+  power: 1.2
+  items: [
+    polar-quartz/2
+    cryo-shale/1
+  ]
+}
+outputItem: subzero-silicon/2
+craftEffect: vapor
+category: crafting
+research: core-frost
+requirements: [
+  glacite/40
+  cryo-shale/30
+]

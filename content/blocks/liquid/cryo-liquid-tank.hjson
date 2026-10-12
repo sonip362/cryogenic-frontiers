@@ -5,9 +5,9 @@ size: 2
 health: 350
 liquidCapacity: 800.0
 requirements: [
-  metaglass/25
-  titanium/20
-  cryo-crystal/15
+  cryo-glass/25
+  glacite/20
+  subzero-silicon/15
 ]
 category: liquid
 research: cryo-liquid-router

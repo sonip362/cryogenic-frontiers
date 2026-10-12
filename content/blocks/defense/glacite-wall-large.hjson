@@ -1,0 +1,10 @@
+type: Wall
+name: "Large Glacite Wall"
+description: "A fortified double-thick Glacite blast barrier. Provides durable early-to-midgame defensive containment."
+size: 2
+health: 1760
+requirements: [
+  glacite/24
+]
+category: defense
+research: glacite-wall

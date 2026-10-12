@@ -1,6 +1,6 @@
 type: GenericCrafter
 name: "Cryo-Crystallizer"
-description: "Pressurizes liquid cryofluid, titanium, and silicon into solid Cryo-Crystals under cryogenic temperatures."
+description: "Pressurizes Polar Quartz, Boreonite, and Chilled Water into dense solid Cryo-Crystals under cryogenic temperatures."
 size: 2
 health: 540
 hasPower: true
@@ -10,23 +10,22 @@ itemCapacity: 20
 liquidCapacity: 30
 craftTime: 45
 consumes: {
-  power: 2.5
+  power: 2.2
   items: [
-    titanium/2
-    silicon/1
+    polar-quartz/2
+    boreonite/1
   ]
   liquid: {
-    liquid: cryofluid
-    amount: 0.2
+    liquid: chilled-water
+    amount: 0.15
   }
 }
 outputItem: cryo-crystal/1
 craftEffect: vapor
 category: crafting
-research: cryofluid-mixer
+research: cryo-synthesizer
 requirements: [
-  copper/90
-  lead/75
-  titanium/60
-  silicon/40
+  glacite/80
+  cryo-shale/60
+  subzero-silicon/40
 ]

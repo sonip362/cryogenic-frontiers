@@ -7,9 +7,9 @@ range: 5
 transportTime: 3.5
 bufferCapacity: 20
 requirements: [
-  titanium/6
-  lead/6
-  cryo-crystal/4
+  glacite/6
+  cryo-shale/6
+  subzero-silicon/4
 ]
 category: distribution
 research: cryo-junction

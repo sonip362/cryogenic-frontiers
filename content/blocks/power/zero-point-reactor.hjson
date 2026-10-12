@@ -1,6 +1,6 @@
 type: ConsumeGenerator
 name: "Zero-Point Cryo-Reactor"
-description: "A monumental power complex. Harnesses the zero-point thermal vacuum created by compressing Cryo-Alloy within continuous cryofluid coolant baths to generate staggering quantities of clean electricity."
+description: "A monumental power complex. Harnesses the zero-point thermal vacuum created by compressing Cryo-Alloy within continuous Chilled Water coolant baths to generate staggering quantities of clean electricity."
 size: 4
 health: 3200
 hasPower: true
@@ -16,17 +16,15 @@ consumes: {
     cryo-alloy/1
   ]
   liquid: {
-    liquid: cryofluid
+    liquid: chilled-water
     amount: 0.3
   }
 }
 requirements: [
-  lead/450
-  silicon/350
-  thorium/280
-  surge-alloy/150
-  cryo-crystal/180
-  cryo-alloy/90
+  glacite/320
+  subzero-silicon/220
+  cryo-crystal/140
+  cryo-alloy/80
 ]
 category: power
 research: thermo-stirling-engine

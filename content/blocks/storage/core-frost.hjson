@@ -9,9 +9,9 @@ unitCapModifier: 8
 thrusterLength: 10.0
 isFirstTier: true
 requirements: [
-  copper/1000
-  lead/800
-  cryo-crystal/300
+  glacite/1000
+  cryo-shale/800
+  polar-quartz/300
 ]
 category: effect
-research: core-shard
+research: core-frost
