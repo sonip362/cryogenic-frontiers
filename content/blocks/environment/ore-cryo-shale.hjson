@@ -1,2 +1,5 @@
 type: OreBlock
 itemDrop: cryo-shale
+oreDefault: true
+oreThreshold: 0.828
+oreScale: 23.95

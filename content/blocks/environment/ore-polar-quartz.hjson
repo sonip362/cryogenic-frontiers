@@ -1,2 +1,5 @@
 type: OreBlock
 itemDrop: polar-quartz
+oreDefault: true
+oreThreshold: 0.864
+oreScale: 24.9

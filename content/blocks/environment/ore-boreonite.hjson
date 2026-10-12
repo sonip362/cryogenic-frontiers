@@ -1,2 +1,5 @@
 type: OreBlock
 itemDrop: boreonite
+oreDefault: true
+oreThreshold: 0.846
+oreScale: 24.43

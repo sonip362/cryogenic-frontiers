@@ -1,2 +1,5 @@
 type: OreBlock
 itemDrop: glacite
+oreDefault: true
+oreThreshold: 0.81
+oreScale: 23.47
