@@ -64,12 +64,39 @@ ammoTypes: {
       statusDuration: 120
     }
   }
+  cryo-nanites: {
+    type: BasicBulletType
+    speed: 9.5
+    lifetime: 24
+    damage: 54
+    knockback: 1.6
+    width: 7
+    height: 12
+    frontColor: "ffffff"
+    backColor: "78f3e5"
+    status: sapped
+    statusDuration: 180
+    fragBullets: 2
+    fragBullet: {
+      type: BasicBulletType
+      speed: 4.5
+      lifetime: 14
+      damage: 16
+      width: 4
+      height: 6
+      frontColor: "ffffff"
+      backColor: "6ecdec"
+      status: freezing
+      statusDuration: 120
+    }
+  }
 }
 requirements: [
   glacite/200
   cryo-shale/160
   subzero-silicon/120
   cryo-crystal/75
+  cryo-fiber/45
 ]
 category: turret
 research: frostbite

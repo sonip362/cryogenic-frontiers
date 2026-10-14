@@ -1,0 +1,6 @@
+name: "Gelid Polymer"
+description: "A flexible, non-brittle synthetic polymer engineered to withstand extreme cryogenic temperatures. Used in advanced logistics belts and lightweight unit airframes."
+type: material
+cost: 1.5
+color: "4a828a"
+research: boreal-clathrate

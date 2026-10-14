@@ -1,0 +1,6 @@
+name: "Cryo-Nanites"
+description: "Active self-assembling microscopic constructs programmed to rapidly synthesize, weld, and repair mechanical structures at sub-zero temperatures."
+type: material
+cost: 3.5
+color: "62c4c9"
+research: cryo-processor

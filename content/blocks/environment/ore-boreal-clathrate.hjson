@@ -1,0 +1,6 @@
+type: OreBlock
+itemDrop: boreal-clathrate
+oreDefault: true
+oreThreshold: 0.84
+oreScale: 21.80
+variants: 3

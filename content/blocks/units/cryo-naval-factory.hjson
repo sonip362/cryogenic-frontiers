@@ -1,0 +1,34 @@
+name: "Cryo Naval Shipyard"
+description: "A floating cryogenic shipyard built over deep waters. Assembles reinforced ice-cutting combat vessels and armored submersibles."
+type: UnitFactory
+size: 3
+health: 550
+floating: true
+hasPower: true
+consumes: {
+  power: 3.0
+}
+plans: [
+  {
+    unit: icebreaker
+    time: 1250
+    requirements: [
+      glacite/40
+      gelid-polymer/25
+      cryo-shale/30
+      cryo-glass/15
+      cryo-alloy/15
+      cryo-processor/12
+    ]
+  }
+]
+requirements: [
+  glacite/110
+  cryo-glass/60
+  gelid-polymer/45
+  subzero-silicon/50
+  cryo-processor/25
+  cryo-fiber/25
+]
+category: units
+research: cryo-unit-factory

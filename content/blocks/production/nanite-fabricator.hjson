@@ -1,0 +1,27 @@
+type: GenericCrafter
+name: "Nanite Fabricator"
+description: "Programs sub-atomic micro-assemblers by fusing Cryo-Processors with superconducting Cryo-Alloy and crystalline Cryo-Crystals into active Cryo-Nanites."
+size: 3
+health: 780
+hasPower: true
+hasItems: true
+itemCapacity: 40
+craftTime: 85
+consumes: {
+  power: 5.5
+  items: [
+    cryo-processor/1
+    cryo-alloy/2
+    cryo-crystal/2
+  ]
+}
+outputItem: cryo-nanites/1
+craftEffect: vapor
+category: crafting
+research: cryo-processor-factory
+requirements: [
+  glacite/140
+  cryo-processor/30
+  cryo-alloy/50
+  cryo-crystal/60
+]

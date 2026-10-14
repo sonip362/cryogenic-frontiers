@@ -1,0 +1,25 @@
+type: GenericCrafter
+name: "Polymer Press"
+description: "Pressurizes volatile Boreal Clathrate with insulated Cryo-Glass under cryogenic vacuum into non-brittle Gelid Polymer sheets."
+size: 2
+health: 390
+hasPower: true
+hasItems: true
+itemCapacity: 20
+craftTime: 45
+consumes: {
+  power: 1.5
+  items: [
+    boreal-clathrate/2
+    cryo-glass/1
+  ]
+}
+outputItem: gelid-polymer/1
+craftEffect: smoke
+category: crafting
+research: cryo-glass-kiln
+requirements: [
+  glacite/50
+  cryo-shale/40
+  polar-quartz/30
+]

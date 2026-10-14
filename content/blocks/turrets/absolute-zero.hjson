@@ -39,6 +39,10 @@ requirements: [
   cryo-shale/110
   subzero-silicon/85
   cryo-crystal/60
+  cryo-glass/40
+  cryo-processor/25
+  superconducting-solenoid/30
+  aero-glacite/25
 ]
 category: turret
 research: frostbite

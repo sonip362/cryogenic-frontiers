@@ -47,12 +47,67 @@ ammoTypes: {
     statusDuration: 360
     hitEffect: hitLancer
   }
+  aero-glacite: {
+    type: BasicBulletType
+    speed: 24
+    lifetime: 17
+    damage: 980
+    width: 9
+    height: 30
+    frontColor: "ffffff"
+    backColor: "d0f0fd"
+    pierce: true
+    pierceCap: 12
+    pierceBuilding: true
+    status: freezing
+    statusDuration: 240
+    hitEffect: blastExplosion
+    shootEffect: shootBig
+    smokeEffect: shootBigSmoke
+  }
+  quantum-condensate: {
+    type: BasicBulletType
+    speed: 16
+    lifetime: 25
+    damage: 2400
+    splashDamage: 750
+    splashDamageRadius: 64
+    width: 16
+    height: 34
+    frontColor: "ffffff"
+    backColor: "b088ff"
+    pierce: true
+    pierceCap: 6
+    pierceBuilding: true
+    status: freezing
+    statusDuration: 1200
+    hitEffect: blastExplosion
+    despawnEffect: blastExplosion
+    shootEffect: shootBig
+    smokeEffect: shootBigSmoke
+    fragBullets: 6
+    fragBullet: {
+      type: BasicBulletType
+      speed: 5
+      lifetime: 16
+      damage: 120
+      width: 6
+      height: 10
+      frontColor: "ffffff"
+      backColor: "a9d8ff"
+      status: freezing
+      statusDuration: 300
+    }
+  }
 }
 requirements: [
   glacite/320
   subzero-silicon/240
   cryo-crystal/140
   cryo-alloy/85
+  superconducting-solenoid/50
+  cryo-processor/45
+  quantum-condensate/20
 ]
 category: turret
 research: permafrost

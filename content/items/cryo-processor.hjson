@@ -1,0 +1,6 @@
+name: "Cryo-Processor"
+description: "A liquid-cooled integrated microcircuit operating under cryogenic vacuum. Directs autonomous combat walkers, automated smart defenses, and complex fabricators."
+type: material
+cost: 2.2
+color: "5de0e6"
+research: subzero-silicon

@@ -1,0 +1,9 @@
+name: "Boreal Clathrate"
+description: "Volatile hydrocarbon gas hydrate crystals trapped within water-ice lattices. High chemical reactivity makes it a vital feedstock for polymer synthesis and high-yield turbine fuel."
+type: material
+hardness: 2
+cost: 1.1
+color: "6ee3b4"
+flammability: 0.45
+explosiveness: 0.2
+research: core-frost

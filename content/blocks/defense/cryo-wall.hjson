@@ -20,6 +20,7 @@ destroyBullet: {
 requirements: [
   glacite/6
   cryo-crystal/6
+  endothermic-salt/6
 ]
 category: defense
 research: glacite-wall

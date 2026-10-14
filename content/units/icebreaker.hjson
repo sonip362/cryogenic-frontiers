@@ -1,0 +1,78 @@
+name: "Icebreaker"
+description: "A heavily reinforced cryogenic naval combat cutter. Ploughs through frozen seas to launch long-range homing sub-zero torpedoes and shatter coastal defenses with dual frost flak."
+type: naval
+health: 980
+armor: 6
+speed: 0.82
+accel: 0.18
+drag: 0.12
+hitSize: 15
+trailLength: 22
+trailX: 5.5
+trailY: -5.0
+trailScl: 1.2
+rotateSpeed: 1.8
+targetAir: true
+targetGround: true
+weapons: [
+  {
+    name: "icebreaker-torpedo"
+    x: 0
+    y: 4
+    reload: 45
+    recoil: 2.5
+    rotate: true
+    rotateSpeed: 2.5
+    mirror: false
+    shootSound: missile
+    ejectEffect: none
+    bullet: {
+      type: MissileBulletType
+      speed: 3.5
+      damage: 48
+      lifetime: 55
+      width: 8
+      height: 12
+      homingPower: 0.15
+      homingRange: 120
+      frontColor: "ffffff"
+      backColor: "6ecdec"
+      trailColor: "8ce6ff"
+      status: "freezing"
+      statusDuration: 240
+      splashDamage: 32
+      splashDamageRadius: 24
+      hitEffect: blastExplosion
+      despawnEffect: blastExplosion
+    }
+  }
+  {
+    name: "icebreaker-flak"
+    x: 5.5
+    y: -3
+    reload: 20
+    alternate: true
+    recoil: 1.2
+    rotate: true
+    rotateSpeed: 4.0
+    shootSound: pew
+    ejectEffect: none
+    bullet: {
+      type: FlakBulletType
+      speed: 5.5
+      damage: 16
+      lifetime: 28
+      width: 6
+      height: 8
+      frontColor: "ffffff"
+      backColor: "85f2ff"
+      status: "freezing"
+      statusDuration: 120
+      explodeRange: 18
+      splashDamage: 12
+      splashDamageRadius: 18
+      hitEffect: flakExplosion
+    }
+  }
+]
+research: cryo-naval-factory

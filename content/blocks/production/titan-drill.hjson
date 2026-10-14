@@ -25,6 +25,9 @@ requirements: [
   subzero-silicon/160
   cryo-crystal/90
   cryo-alloy/60
+  aero-glacite/35
+  cryo-nanites/25
+  superconducting-solenoid/30
 ]
 category: production
 research: cryo-drill

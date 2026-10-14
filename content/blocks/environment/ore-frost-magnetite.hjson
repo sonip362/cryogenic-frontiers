@@ -1,0 +1,6 @@
+type: OreBlock
+itemDrop: frost-magnetite
+oreDefault: true
+oreThreshold: 0.83
+oreScale: 22.15
+variants: 3

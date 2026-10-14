@@ -1,0 +1,32 @@
+type: GenericCrafter
+name: "Cavitation Foundry"
+description: "Injects high-pressure Chilled Water into an acoustic cavitation chamber to foam molten Glacite and Gelid Polymer into ultra-lightweight Aero-Glacite."
+size: 3
+health: 640
+hasPower: true
+hasItems: true
+hasLiquids: true
+itemCapacity: 30
+liquidCapacity: 30
+craftTime: 60
+consumes: {
+  power: 3.5
+  items: [
+    glacite/3
+    gelid-polymer/2
+  ]
+  liquid: {
+    liquid: chilled-water
+    amount: 0.15
+  }
+}
+outputItem: aero-glacite/1
+craftEffect: vapor
+category: crafting
+research: polymer-press
+requirements: [
+  glacite/100
+  gelid-polymer/50
+  cryo-glass/40
+  cryo-alloy/25
+]

@@ -25,6 +25,10 @@ requirements: [
   subzero-silicon/220
   cryo-crystal/140
   cryo-alloy/80
+  superconducting-solenoid/40
+  cryo-processor/35
+  cryo-nanites/30
+  quantum-condensate/20
 ]
 category: power
 research: thermo-stirling-engine

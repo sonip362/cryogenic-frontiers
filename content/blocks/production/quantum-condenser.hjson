@@ -1,0 +1,33 @@
+type: GenericCrafter
+name: "Quantum Condenser"
+description: "A colossal cryogenic particle chamber that subjects Cryo-Crystals to intense Superconducting Solenoid magnetic vortexes and Endothermic Salt flash-compression to distill Quantum Condensate."
+size: 4
+health: 1400
+hasPower: true
+hasItems: true
+hasLiquids: true
+itemCapacity: 50
+liquidCapacity: 50
+craftTime: 120
+consumes: {
+  power: 12.0
+  items: [
+    cryo-crystal/4
+    superconducting-solenoid/2
+    endothermic-salt/3
+  ]
+  liquid: {
+    liquid: chilled-water
+    amount: 0.3
+  }
+}
+outputItem: quantum-condensate/1
+craftEffect: smokeCloud
+category: crafting
+research: nanite-fabricator
+requirements: [
+  glacite/250
+  cryo-alloy/120
+  superconducting-solenoid/40
+  cryo-nanites/30
+]

@@ -15,6 +15,20 @@ plans: [
       subzero-silicon/25
       glacite/20
       cryo-crystal/15
+      aero-glacite/12
+      cryo-fiber/15
+    ]
+  }
+  {
+    unit: sleet
+    time: 1100
+    requirements: [
+      glacite/35
+      subzero-silicon/25
+      gelid-polymer/15
+      superconducting-solenoid/8
+      cryo-processor/10
+      cryo-nanites/8
     ]
   }
 ]
@@ -23,6 +37,8 @@ requirements: [
   subzero-silicon/80
   cryo-crystal/40
   cryo-alloy/25
+  cryo-processor/20
+  superconducting-solenoid/20
 ]
 category: units
 research: core-frost

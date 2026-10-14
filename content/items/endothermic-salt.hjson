@@ -1,0 +1,8 @@
+name: "Endothermic Salt"
+description: "A highly reactive endothermic chemical compound. Absorbs enormous thermal energy when shocked, flash-freezing surrounding materials and shattering structural armor."
+type: material
+cost: 1.6
+color: "9b3d68"
+flammability: 0.1
+explosiveness: 0.45
+research: cryo-shale

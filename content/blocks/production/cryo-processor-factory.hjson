@@ -1,0 +1,27 @@
+type: GenericCrafter
+name: "Processor Assembler"
+description: "Etches Subzero Silicon wafers with laser-guided Cryo-Fiber conduits into liquid-cooled Cryo-Processors for advanced logic and autonomous units."
+size: 3
+health: 560
+hasPower: true
+hasItems: true
+itemCapacity: 30
+craftTime: 60
+consumes: {
+  power: 3.2
+  items: [
+    subzero-silicon/3
+    cryo-fiber/2
+    glacite/2
+  ]
+}
+outputItem: cryo-processor/1
+craftEffect: vapor
+category: crafting
+research: fiber-extruder
+requirements: [
+  glacite/80
+  subzero-silicon/60
+  polar-quartz/40
+  cryo-crystal/25
+]

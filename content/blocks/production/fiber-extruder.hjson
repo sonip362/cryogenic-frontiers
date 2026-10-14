@@ -1,0 +1,25 @@
+type: GenericCrafter
+name: "Fiber Extruder"
+description: "Draws molten Polar Quartz and structural Glacite through precision diamond micro-dies to produce ultra-pure Cryo-Fiber filaments."
+size: 2
+health: 360
+hasPower: true
+hasItems: true
+itemCapacity: 20
+craftTime: 35
+consumes: {
+  power: 1.4
+  items: [
+    polar-quartz/2
+    glacite/1
+  ]
+}
+outputItem: cryo-fiber/2
+craftEffect: vapor
+category: crafting
+research: cryo-synthesizer
+requirements: [
+  glacite/45
+  polar-quartz/35
+  cryo-shale/25
+]

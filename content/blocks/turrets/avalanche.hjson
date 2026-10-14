@@ -76,6 +76,28 @@ ammoTypes: {
       statusDuration: 180
     }
   }
+  superconducting-solenoid: {
+    type: MissileBulletType
+    speed: 5.2
+    lifetime: 60
+    damage: 260
+    splashDamage: 180
+    splashDamageRadius: 52
+    homingPower: 0.18
+    homingRange: 180
+    width: 12
+    height: 18
+    frontColor: "ffffff"
+    backColor: "d086ff"
+    status: shocked
+    statusDuration: 360
+    hitEffect: blastExplosion
+    despawnEffect: blastExplosion
+    lightning: 4
+    lightningLength: 12
+    lightningDamage: 30
+    lightningColor: "a9d8ff"
+  }
 }
 requirements: [
   glacite/190
@@ -83,6 +105,7 @@ requirements: [
   subzero-silicon/120
   cryo-crystal/75
   cryo-alloy/40
+  cryo-processor/25
 ]
 category: turret
 research: permafrost

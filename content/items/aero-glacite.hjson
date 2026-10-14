@@ -1,0 +1,6 @@
+name: "Aero-Glacite"
+description: "A microporous metallic aerogel forged from Glacite and Gelid Polymer. Weighs 90% less than standard alloy while retaining outstanding compressive toughness and impact absorption."
+type: material
+cost: 2.0
+color: "8bb7d6"
+research: gelid-polymer

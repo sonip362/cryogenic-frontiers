@@ -8,6 +8,7 @@ chanceDeflect: 25
 flashHit: true
 requirements: [
   cryo-alloy/6
+  cryo-nanites/4
 ]
 category: defense
 research: cryo-wall

@@ -18,6 +18,8 @@ requirements: [
   glacite/45
   cryo-shale/35
   polar-quartz/20
+  endothermic-salt/15
+  cryo-fiber/10
 ]
 category: power
 research: core-frost

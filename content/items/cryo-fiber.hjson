@@ -1,0 +1,6 @@
+name: "Cryo-Fiber"
+description: "High-purity optic filament drawn from molten Polar Quartz and Glacite. Carries light signals with virtually zero loss, enabling precision tracking and quantum logic networks."
+type: material
+cost: 1.4
+color: "85f2ff"
+research: polar-quartz

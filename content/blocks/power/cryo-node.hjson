@@ -1,0 +1,15 @@
+type: PowerNode
+name: "Cryo Node"
+description: "Transmits electrical power across structures. Connects up to 10 machines via low-loss cryogenic conduits."
+size: 1
+health: 90
+maxNodes: 10
+laserRange: 6.5
+laserColor1: "ffffff"
+laserColor2: "6ecdec"
+requirements: [
+  glacite/3
+  cryo-shale/3
+]
+category: power
+research: core-frost

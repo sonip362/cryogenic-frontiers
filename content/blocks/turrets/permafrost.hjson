@@ -70,6 +70,51 @@ ammoTypes: {
       statusDuration: 180
     }
   }
+  endothermic-salt: {
+    type: ArtilleryBulletType
+    speed: 3.2
+    lifetime: 89
+    damage: 110
+    splashDamage: 120
+    splashDamageRadius: 56
+    width: 14
+    height: 14
+    frontColor: "ffffff"
+    backColor: "d99f57"
+    status: freezing
+    statusDuration: 600
+    hitEffect: blastExplosion
+    despawnEffect: blastExplosion
+  }
+  cryo-nanites: {
+    type: ArtilleryBulletType
+    speed: 3.6
+    lifetime: 79
+    damage: 145
+    splashDamage: 85
+    splashDamageRadius: 44
+    width: 13
+    height: 13
+    frontColor: "ffffff"
+    backColor: "78f3e5"
+    status: sapped
+    statusDuration: 360
+    hitEffect: blastExplosion
+    despawnEffect: blastExplosion
+    fragBullets: 6
+    fragBullet: {
+      type: BasicBulletType
+      speed: 3.8
+      damage: 18
+      lifetime: 18
+      width: 5
+      height: 7
+      frontColor: "ffffff"
+      backColor: "78f3e5"
+      status: sapped
+      statusDuration: 180
+    }
+  }
 }
 requirements: [
   glacite/140

@@ -1,0 +1,18 @@
+type: PowerNode
+name: "Large Cryo Node"
+description: "A wide-area cryogenic power distribution pylon. Connects up to 22 structures across long distances with insulated high-voltage beams."
+size: 2
+health: 320
+maxNodes: 22
+laserRange: 16.0
+laserColor1: "ffffff"
+laserColor2: "6ecdec"
+requirements: [
+  glacite/25
+  cryo-shale/15
+  polar-quartz/10
+  cryo-fiber/10
+  superconducting-solenoid/8
+]
+category: power
+research: cryo-node

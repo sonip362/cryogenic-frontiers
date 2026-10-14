@@ -15,6 +15,7 @@ requirements: [
   glacite/40
   cryo-shale/35
   subzero-silicon/25
+  endothermic-salt/15
 ]
 category: crafting
 research: cryo-synthesizer

@@ -1,0 +1,25 @@
+type: GenericCrafter
+name: "Endothermic Vat"
+description: "Reacts ballistic Cryo-Shale with reactive Boreonite fuel in a vacuum expansion vessel to synthesize volatile Endothermic Salt crystals."
+size: 2
+health: 420
+hasPower: true
+hasItems: true
+itemCapacity: 20
+craftTime: 50
+consumes: {
+  power: 1.8
+  items: [
+    cryo-shale/2
+    boreonite/2
+  ]
+}
+outputItem: endothermic-salt/1
+craftEffect: shockwave
+category: crafting
+research: cryo-crystallizer
+requirements: [
+  glacite/60
+  boreonite/40
+  cryo-shale/40
+]

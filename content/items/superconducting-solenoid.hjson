@@ -1,0 +1,7 @@
+name: "Superconducting Solenoid"
+description: "A zero-resistance electromagnetic induction coil coiled from Cryo-Alloy and Frost-Magnetite. Generates colossal magnetic fields for mass drivers, railguns, and deflection shields."
+type: material
+cost: 2.8
+charge: 0.8
+color: "319fa8"
+research: cryo-alloy

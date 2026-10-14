@@ -10,6 +10,7 @@ requirements: [
   glacite/6
   cryo-shale/6
   subzero-silicon/4
+  cryo-fiber/6
 ]
 category: distribution
 research: cryo-junction

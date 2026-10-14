@@ -1,0 +1,27 @@
+type: GenericCrafter
+name: "Solenoid Winder"
+description: "Winds superconducting Cryo-Alloy filaments around precision Frost-Magnetite cores under cryogenic vacuum to forge Superconducting Solenoids."
+size: 3
+health: 680
+hasPower: true
+hasItems: true
+itemCapacity: 30
+craftTime: 70
+consumes: {
+  power: 4.0
+  items: [
+    cryo-alloy/2
+    frost-magnetite/3
+    subzero-silicon/1
+  ]
+}
+outputItem: superconducting-solenoid/1
+craftEffect: shockwave
+category: crafting
+research: cryo-alloy-foundry
+requirements: [
+  glacite/110
+  cryo-alloy/45
+  subzero-silicon/60
+  frost-magnetite/50
+]

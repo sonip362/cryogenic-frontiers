@@ -1,0 +1,47 @@
+name: "Sleet"
+description: "A heavy armored cryogenic assault walker. Equipped with dual rapid-cycle shard autocannons that inflict freezing on hostile targets and pierce through frontlines."
+type: mech
+speed: 0.62
+boostMultiplier: 1.0
+canBoost: false
+health: 720
+armor: 5
+hitSize: 12
+itemCapacity: 40
+outlineColor: "202127"
+mechFrontSway: 0.45
+mechSideSway: 0.35
+targetAir: false
+targetGround: true
+weapons: [
+  {
+    name: "sleet-weapon"
+    top: false
+    x: 7.5
+    y: 0.5
+    reload: 16
+    recoil: 1.5
+    alternate: true
+    shootSound: shootSnap
+    ejectEffect: none
+    bullet: {
+      type: BasicBulletType
+      speed: 4.8
+      damage: 24
+      lifetime: 36
+      width: 7
+      height: 10
+      frontColor: "ffffff"
+      backColor: "6ecdec"
+      status: "freezing"
+      statusDuration: 180
+      pierce: true
+      pierceCap: 1
+      shootEffect: shootSmall
+      smokeEffect: shootSmallSmoke
+      hitEffect: hitLancer
+      despawnEffect: hitLancer
+    }
+  }
+]
+research: cryo-unit-factory

@@ -9,6 +9,7 @@ requirements: [
   cryo-glass/8
   glacite/6
   subzero-silicon/4
+  cryo-fiber/8
 ]
 category: liquid
 research: cryo-liquid-junction
