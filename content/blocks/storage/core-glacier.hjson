@@ -1,0 +1,17 @@
+name: "Core: Glacier"
+description: "Advanced fortified command citadel for cryogenic operations. Vastly expands item storage, unit capacity, and deploys the agile Frost Beta constructor unit."
+type: CoreBlock
+size: 4
+health: 4200
+itemCapacity: 9000
+unitType: "frost-beta"
+unitCapModifier: 16
+thrusterLength: 13.5
+requirements: [
+  glacite/3200
+  subzero-silicon/2200
+  cryo-glass/1400
+  cryo-crystal/900
+]
+category: effect
+research: core-frost

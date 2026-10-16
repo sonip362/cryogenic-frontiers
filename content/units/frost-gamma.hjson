@@ -1,0 +1,81 @@
+name: "Frost Gamma"
+description: "Heavy command-class cryogenic constructor craft. Outfitted with high-yield subzero excavation lasers, industrial-grade nanofabrication beams, and heavy defensive ice-torpedo pods."
+type: flying
+flying: true
+coreUnitDock: true
+controller: BuilderAI
+isEnemy: false
+health: 750
+armor: 6
+speed: 4.1
+accel: 0.16
+drag: 0.05
+mineSpeed: 13.0
+mineTier: 4
+buildSpeed: 2.2
+itemCapacity: 110
+hitSize: 13
+engineOffset: 9.0
+engineSize: 3.4
+engineColor: "73ffee"
+targetAir: true
+targetGround: true
+weapons: [
+  {
+    name: "frost-gamma-blaster"
+    x: 6.5
+    y: 3.0
+    reload: 12
+    alternate: true
+    ejectEffect: none
+    shootSound: pew
+    bullet: {
+      type: BasicBulletType
+      speed: 5.2
+      damage: 32
+      lifetime: 36
+      width: 7.5
+      height: 11.0
+      frontColor: "ffffff"
+      backColor: "6ecdec"
+      status: "freezing"
+      statusDuration: 200
+      pierce: true
+      pierceCap: 2
+      shootEffect: shootSmall
+      smokeEffect: shootSmallSmoke
+      hitEffect: hitLaser
+      despawnEffect: hitLaser
+    }
+  }
+  {
+    name: "frost-gamma-missiles"
+    x: 3.5
+    y: -2.0
+    reload: 35
+    alternate: true
+    recoil: 1.0
+    shootSound: missile
+    ejectEffect: none
+    bullet: {
+      type: MissileBulletType
+      speed: 3.8
+      damage: 26
+      lifetime: 45
+      width: 6.5
+      height: 9.0
+      homingPower: 0.14
+      homingRange: 100
+      frontColor: "ffffff"
+      backColor: "73ffee"
+      trailColor: "8ce6ff"
+      status: "freezing"
+      statusDuration: 180
+      splashDamage: 18
+      splashDamageRadius: 16
+      hitEffect: blastExplosion
+      despawnEffect: blastExplosion
+    }
+  }
+]
+research: core-cryosphere

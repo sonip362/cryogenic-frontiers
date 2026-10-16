@@ -1,0 +1,19 @@
+name: "Core: Cryosphere"
+description: "Colossal planetary command nexus. Engineered with superconducting armor plates, massive storage bays, and automated fabrication bays for the heavy Frost Gamma command vessel."
+type: CoreBlock
+size: 5
+health: 7500
+itemCapacity: 18000
+unitType: "frost-gamma"
+unitCapModifier: 28
+thrusterLength: 17.5
+requirements: [
+  glacite/8000
+  cryo-alloy/3500
+  subzero-silicon/4500
+  cryo-crystal/3000
+  aero-glacite/1800
+  cryo-processor/1200
+]
+category: effect
+research: core-glacier

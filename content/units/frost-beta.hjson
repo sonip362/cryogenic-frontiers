@@ -1,0 +1,52 @@
+name: "Frost Beta"
+description: "Upgraded cryogenic core constructor unit. Boasts boosted mining throughput, faster construction emitters, and twin cryogenic shard blasters."
+type: flying
+flying: true
+coreUnitDock: true
+controller: BuilderAI
+isEnemy: false
+health: 440
+armor: 3
+speed: 3.7
+accel: 0.14
+drag: 0.05
+mineSpeed: 9.5
+mineTier: 3
+buildSpeed: 1.4
+itemCapacity: 70
+hitSize: 10
+engineOffset: 7.5
+engineSize: 2.8
+engineColor: "73ffee"
+targetAir: true
+targetGround: true
+weapons: [
+  {
+    name: "frost-beta-weapon"
+    x: 4.5
+    y: 2.5
+    reload: 14
+    alternate: true
+    ejectEffect: none
+    shootSound: pew
+    bullet: {
+      type: BasicBulletType
+      speed: 4.6
+      damage: 20
+      lifetime: 38
+      width: 6.5
+      height: 9.5
+      frontColor: "ffffff"
+      backColor: "73ffee"
+      status: "freezing"
+      statusDuration: 140
+      pierce: true
+      pierceCap: 1
+      shootEffect: shootSmall
+      smokeEffect: shootSmallSmoke
+      hitEffect: hitLaser
+      despawnEffect: hitLaser
+    }
+  }
+]
+research: core-glacier
