@@ -1,0 +1,37 @@
+type: ThermalGenerator
+name: "Cryo Hydro-Turbine"
+description: "A submerged kinetic turbine that harnesses electrical power directly from shallow water currents. Can only be constructed in shallow water."
+size: 2
+health: 340
+hasPower: true
+powerProduction: 4.5
+attribute: water
+generateEffect: none
+drawer: {
+  type: DrawMulti
+  drawers: [
+    {
+      type: DrawDefault
+    }
+    {
+      type: DrawRegion
+      suffix: -rotator
+      rotateSpeed: 4
+    }
+    {
+      type: DrawRegion
+      suffix: -top
+    }
+  ]
+}
+ambientSound: loopHum
+ambientSoundVolume: 0.04
+floating: true
+requiresWater: true
+placeableLiquid: false
+requirements: [
+  glacite/25
+  cryo-shale/18
+]
+category: power
+research: core-frost

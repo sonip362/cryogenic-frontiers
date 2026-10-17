@@ -1,0 +1,104 @@
+name: "Glacier Cruiser"
+description: "A capital-class cryogenic naval battlecruiser upgraded from the Icebreaker. Dominates waterways with dual rotating cryogenic artillery batteries and rapid-firing freezing flak guns."
+type: naval
+health: 2350
+armor: 11
+speed: 0.70
+accel: 0.14
+drag: 0.14
+hitSize: 22
+trailLength: 30
+trailScl: 1.6
+rotateSpeed: 1.3
+targetAir: true
+targetGround: true
+weapons: [
+  {
+    name: "glacier-cruiser-turret"
+    x: 0
+    y: 8
+    reload: 50
+    recoil: 3.0
+    rotate: true
+    rotateSpeed: 2.2
+    mirror: false
+    shootSound: shootArtillery
+    ejectEffect: none
+    bullet: {
+      type: ArtilleryBulletType
+      speed: 4.4
+      damage: 75
+      lifetime: 55
+      width: 10
+      height: 14
+      collidesTiles: true
+      collides: true
+      splashDamage: 55
+      splashDamageRadius: 32
+      frontColor: "ffffff"
+      backColor: "6ecdec"
+      status: "freezing"
+      statusDuration: 240
+      hitEffect: blastExplosion
+      despawnEffect: blastExplosion
+    }
+  }
+  {
+    name: "glacier-cruiser-turret"
+    x: 0
+    y: -8
+    reload: 50
+    recoil: 3.0
+    rotate: true
+    rotateSpeed: 2.2
+    mirror: false
+    shootSound: shootArtillery
+    ejectEffect: none
+    bullet: {
+      type: ArtilleryBulletType
+      speed: 4.4
+      damage: 75
+      lifetime: 55
+      width: 10
+      height: 14
+      collidesTiles: true
+      collides: true
+      splashDamage: 55
+      splashDamageRadius: 32
+      frontColor: "ffffff"
+      backColor: "6ecdec"
+      status: "freezing"
+      statusDuration: 240
+      hitEffect: blastExplosion
+      despawnEffect: blastExplosion
+    }
+  }
+  {
+    x: 8.5
+    y: 0
+    reload: 16
+    alternate: true
+    recoil: 1.2
+    rotate: true
+    rotateSpeed: 4.5
+    shootSound: shoot
+    ejectEffect: none
+    bullet: {
+      type: FlakBulletType
+      speed: 5.8
+      damage: 22
+      lifetime: 30
+      width: 6.5
+      height: 8.5
+      frontColor: "ffffff"
+      backColor: "85f2ff"
+      status: "freezing"
+      statusDuration: 140
+      explodeRange: 20
+      splashDamage: 16
+      splashDamageRadius: 20
+      hitEffect: flakExplosion
+    }
+  }
+]
+research: cryo-reconstructor

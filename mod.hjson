@@ -11,13 +11,16 @@ Features:
 - Natural Ores (6): Glacite, Cryo-Shale, Boreonite, Polar Quartz, Frost-Magnetite, Boreal Clathrate
 - Industrial Materials (12): Subzero Silicon, Cryo-Glass, Gelid Polymer, Cryo-Fiber, Endothermic Salt, Cryo-Processor, Aero-Glacite, Superconducting Solenoid, Cryo-Crystal, Cryo-Alloy, Cryo-Nanites, Quantum Condensate
 - Refineries & Chemical Plants (11): Cryo-Synthesizer, Cryo-Glass Kiln, Polymer Press, Fiber Extruder, Endothermic Vat, Processor Assembler, Cavitation Foundry, Solenoid Winder, Cryo-Crystallizer, Industrial Crystallizer, Cryo-Alloy Foundry, Nanite Fabricator, Quantum Condenser
-- Combat Units (3): Boreas (air interceptor), Sleet (land assault walker mech), Icebreaker (naval torpedo cutter)
-- Unit Facilities (2): Cryo Unit Factory (air & land), Cryo Naval Shipyard (naval ships)
-- Power & Grid: Thermo-Stirling Engine, Zero-Point Cryo-Reactor, Cryo Node, Large Cryo Node
+- Combat Units (6 across 2 Tiers):
+  * Tier 1: Boreas (interceptor), Sleet (walker mech), Icebreaker (naval cutter)
+  * Tier 2: Tempest (heavy strike craft), Hailstorm (armored assault mech), Glacier Cruiser (naval battlecruiser)
+- Unit Facilities (3): Cryo Unit Factory, Cryo Naval Shipyard, Cryo Reconstructor
+- Power & Grid: Cryo Hydro-Turbine (shallow water), Thermo-Stirling Engine, Zero-Point Cryo-Reactor, Cryo Node, Large Cryo Node
 - Logistics Suite: Complete solid & liquid cryogenic transport networks
 - Heavy Turrets: Frostbite, Permafrost, Absolute Zero, Glacialis Railgun, Blizzard Rotary Cannon, Avalanche Torpedo Launcher
 - Fortifications: Glacite Walls, Cryo Nova Walls, Shielded Superconducting Walls
 '''
-version: "2.4.0"
+version: "2.7.0"
 minGameVersion: "136"
+hasScripts: true
 hidden: false

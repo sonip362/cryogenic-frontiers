@@ -1,0 +1,77 @@
+name: "Tempest"
+description: "A heavy twin-engine cryogenic strike aircraft upgraded from the Boreas. Outfitted with high-cadence frost autocannons and wing-mounted thermal-seeking cryogenic missile pods."
+type: flying
+flying: true
+health: 920
+armor: 6
+speed: 2.85
+accel: 0.09
+drag: 0.04
+rotateSpeed: 9.0
+hitSize: 16
+engineOffset: 9.5
+engineSize: 3.6
+engineColor: "84f3ff"
+targetAir: true
+targetGround: true
+weapons: [
+  {
+    x: 6.5
+    y: 2.5
+    reload: 13
+    alternate: true
+    rotate: true
+    rotateSpeed: 25
+    ejectEffect: none
+    shootSound: shoot
+    bullet: {
+      type: BasicBulletType
+      speed: 5.2
+      damage: 26
+      lifetime: 44
+      width: 7.5
+      height: 10.5
+      frontColor: "ffffff"
+      backColor: "8ce6ff"
+      status: "freezing"
+      statusDuration: 150
+      pierce: true
+      pierceCap: 1
+      shootEffect: shootSmall
+      smokeEffect: shootSmallSmoke
+      hitEffect: hitLaser
+      despawnEffect: hitLaser
+    }
+  }
+  {
+    x: 3.5
+    y: -2.5
+    reload: 38
+    alternate: true
+    rotate: true
+    rotateSpeed: 20
+    recoil: 1.0
+    shootSound: missile
+    ejectEffect: none
+    bullet: {
+      type: MissileBulletType
+      speed: 4.0
+      damage: 32
+      lifetime: 50
+      width: 6.5
+      height: 9.5
+      homingPower: 0.16
+      homingRange: 130
+      frontColor: "ffffff"
+      backColor: "73ffee"
+      trailColor: "8ce6ff"
+      status: "freezing"
+      statusDuration: 180
+      splashDamage: 24
+      splashDamageRadius: 20
+      hitEffect: blastExplosion
+      despawnEffect: blastExplosion
+    }
+  }
+]
+research: cryo-reconstructor

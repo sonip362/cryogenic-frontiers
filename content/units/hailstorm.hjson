@@ -1,0 +1,77 @@
+name: "Hailstorm"
+description: "A heavily armored cryogenic assault walker upgraded from the Sleet. Features twin reinforced kinetic rail-blasters and shoulder-mounted burst mortars to shatter fortified enemy positions."
+type: mech
+speed: 0.54
+boostMultiplier: 1.0
+canBoost: false
+health: 1550
+armor: 9
+hitSize: 16
+itemCapacity: 60
+outlineColor: "202127"
+mechFrontSway: 0.55
+mechSideSway: 0.45
+mechStepParticles: true
+targetAir: true
+targetGround: true
+weapons: [
+  {
+    name: "hailstorm-weapon"
+    top: false
+    x: 9.5
+    y: 1.0
+    reload: 18
+    recoil: 2.2
+    alternate: true
+    shootSound: shoot
+    ejectEffect: none
+    bullet: {
+      type: BasicBulletType
+      speed: 5.8
+      damage: 42
+      lifetime: 38
+      width: 8.5
+      height: 12.0
+      frontColor: "ffffff"
+      backColor: "6ecdec"
+      status: "freezing"
+      statusDuration: 220
+      pierce: true
+      pierceCap: 2
+      shootEffect: shootBig
+      smokeEffect: shootSmallSmoke
+      hitEffect: hitLancer
+      despawnEffect: hitLancer
+    }
+  }
+  {
+    x: 4.5
+    y: -3.0
+    reload: 48
+    alternate: true
+    rotate: true
+    rotateSpeed: 15
+    recoil: 1.8
+    shootSound: shootArtillery
+    ejectEffect: none
+    bullet: {
+      type: ArtilleryBulletType
+      speed: 3.6
+      damage: 38
+      lifetime: 55
+      width: 9.0
+      height: 9.0
+      collidesTiles: true
+      collides: true
+      splashDamage: 36
+      splashDamageRadius: 26
+      frontColor: "ffffff"
+      backColor: "8ce6ff"
+      status: "freezing"
+      statusDuration: 200
+      hitEffect: blastExplosion
+      despawnEffect: blastExplosion
+    }
+  }
+]
+research: cryo-reconstructor

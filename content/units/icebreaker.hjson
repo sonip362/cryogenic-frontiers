@@ -8,8 +8,6 @@ accel: 0.18
 drag: 0.12
 hitSize: 15
 trailLength: 22
-trailX: 5.5
-trailY: -5.0
 trailScl: 1.2
 rotateSpeed: 1.8
 targetAir: true
@@ -55,7 +53,7 @@ weapons: [
     recoil: 1.2
     rotate: true
     rotateSpeed: 4.0
-    shootSound: pew
+    shootSound: shoot
     ejectEffect: none
     bullet: {
       type: FlakBulletType

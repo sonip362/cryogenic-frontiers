@@ -1,0 +1,41 @@
+name: "Cryo Reconstructor"
+description: "Upgrades Tier 1 cryogenic combat units into heavily reinforced Tier 2 combat machines. Infuses airframes, mechs, and naval hulls with Cryo-Alloy plating and advanced Cryo-Processors."
+type: Reconstructor
+size: 3
+health: 720
+constructTime: 900
+floating: true
+hasPower: true
+consumes: {
+  power: 4.5
+  items: [
+    cryo-alloy/40
+    subzero-silicon/50
+    cryo-processor/25
+    superconducting-solenoid/20
+  ]
+}
+upgrades: [
+  [
+    boreas
+    tempest
+  ]
+  [
+    sleet
+    hailstorm
+  ]
+  [
+    icebreaker
+    glacier-cruiser
+  ]
+]
+requirements: [
+  glacite/160
+  subzero-silicon/130
+  cryo-crystal/70
+  cryo-alloy/60
+  cryo-processor/40
+  superconducting-solenoid/35
+]
+category: units
+research: cryo-unit-factory

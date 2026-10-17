@@ -1,15 +1,15 @@
 name: "Frost Beta"
-description: "Upgraded cryogenic core constructor unit. Boasts boosted mining throughput, faster construction emitters, and twin cryogenic shard blasters."
+description: "Upgraded cryogenic core constructor unit. Boasts boosted mining throughput, faster construction emitters, and twin autonomous cryogenic shard blasters."
 type: flying
 flying: true
 coreUnitDock: true
-controller: BuilderAI
 isEnemy: false
 health: 440
 armor: 3
 speed: 3.7
 accel: 0.14
 drag: 0.05
+rotateSpeed: 16
 mineSpeed: 9.5
 mineTier: 3
 buildSpeed: 1.4
@@ -22,18 +22,23 @@ targetAir: true
 targetGround: true
 weapons: [
   {
-    name: "frost-beta-weapon"
     x: 4.5
     y: 2.5
-    reload: 14
+    reload: 13
     alternate: true
+    rotate: true
+    rotateSpeed: 25
+    controllable: false
+    autoTarget: true
+    targetInterval: 15
+    targetSwitchInterval: 30
     ejectEffect: none
-    shootSound: pew
+    shootSound: shootAlpha
     bullet: {
       type: BasicBulletType
-      speed: 4.6
-      damage: 20
-      lifetime: 38
+      speed: 4.8
+      damage: 22
+      lifetime: 45
       width: 6.5
       height: 9.5
       frontColor: "ffffff"

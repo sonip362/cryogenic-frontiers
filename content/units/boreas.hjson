@@ -7,6 +7,7 @@ armor: 3
 speed: 2.6
 accel: 0.08
 drag: 0.04
+rotateSpeed: 10
 hitSize: 11
 engineOffset: 6.5
 engineSize: 2.5
@@ -19,8 +20,10 @@ weapons: [
     y: 1.5
     reload: 18
     alternate: true
+    rotate: true
+    rotateSpeed: 25
     ejectEffect: none
-    shootSound: pew
+    shootSound: shootAlpha
     bullet: {
       type: BasicBulletType
       speed: 4.5
