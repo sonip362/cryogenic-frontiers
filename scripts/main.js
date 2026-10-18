@@ -484,9 +484,31 @@ Events.on(EventType.WorldLoadEvent, cons(function(e) {
     }
 }));
 
-// Re-apply shallow water patch on client load
+// Re-apply shallow water patch on client load and verify environment atlas
 Events.on(EventType.ClientLoadEvent, cons(function(e) {
     patchWaterAttributes();
+    try {
+        var grass = Core.atlas.find("grass1");
+        var tiles = [
+            "cryogenic-frontiers-frost-stone1",
+            "cryogenic-frontiers-glacial-snow1",
+            "cryogenic-frontiers-permafrost-ice1",
+            "cryogenic-frontiers-frost-stone-wall1",
+            "cryogenic-frontiers-permafrost-ice-wall1",
+            "cryogenic-frontiers-cryo-boulder1"
+        ];
+        var allOk = true;
+        for (var i = 0; i < tiles.length; i++) {
+            var reg = Core.atlas.find(tiles[i]);
+            if (!reg || !reg.found() || reg.texture != grass.texture) {
+                allOk = false;
+                Log.err("[CryogenicFrontiers] Tile NOT on env page: " + tiles[i]);
+            }
+        }
+        Log.info("[CryogenicFrontiers] All environment tiles on environment page: " + allOk);
+    } catch (ex) {
+        Log.err("[CryogenicFrontiers] Texture verify error: " + ex);
+    }
 }));
 
 // Initial immediate patch execution
