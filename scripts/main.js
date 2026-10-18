@@ -1,13 +1,22 @@
-// Cryogenic Frontiers - Hydro Power & Environment Initializer
-// Enables shallow water tiles (water, sand-water, darksand-water, tainted-water, etc.)
-// to provide the water attribute for the Cryo Hydro-Turbine.
+// ==============================================================================
+// Cryogenic Frontiers - Master Campaign & Environment Engine for Planet Nivalis
+// ==============================================================================
 
+var Attribute = Packages.mindustry.world.meta.Attribute;
+var Attributes = Packages.mindustry.world.meta.Attributes;
+var Blocks = Packages.mindustry.content.Blocks;
+var Team = Packages.mindustry.game.Team;
+var SpawnGroup = Packages.mindustry.game.SpawnGroup;
+var ItemStack = Packages.mindustry.type.ItemStack;
+var Simplex = Packages.arc.util.noise.Simplex;
+var Mathf = Packages.arc.math.Mathf;
+
+// ------------------------------------------------------------------------------
+// 1. Hydro Power Attribute Patching
+// Enables shallow water tiles to provide water attribute for Cryo Hydro-Turbine
+// ------------------------------------------------------------------------------
 function patchWaterAttributes() {
     try {
-        var Attribute = Packages.mindustry.world.meta.Attribute;
-        var Attributes = Packages.mindustry.world.meta.Attributes;
-        var Blocks = Packages.mindustry.content.Blocks;
-
         var waterFloors = [
             Blocks.water,
             Blocks.sandWater,
@@ -22,7 +31,6 @@ function patchWaterAttributes() {
                 if (floor.attributes == null) {
                     floor.attributes = new Attributes();
                 }
-                // 0.25 per tile -> 4 tiles for a 2x2 turbine = 1.0 (100% full efficiency on shallow water)
                 floor.attributes.set(Attribute.water, 0.25);
             }
         }
@@ -32,14 +40,454 @@ function patchWaterAttributes() {
     }
 }
 
-// 1. Run immediately on script evaluation so attributes exist before world load
-patchWaterAttributes();
+// ------------------------------------------------------------------------------
+// 2. Safe Content Resolver
+// ------------------------------------------------------------------------------
+function getBlock(name) {
+    return Vars.content.block("cryogenic-frontiers-" + name) || Vars.content.block(name);
+}
 
-// 2. Re-apply on world and client load events
+function getItem(name) {
+    return Vars.content.item("cryogenic-frontiers-" + name) || Vars.content.item(name);
+}
+
+function getUnit(name) {
+    return Vars.content.unit("cryogenic-frontiers-" + name) || Vars.content.unit(name);
+}
+
+// ------------------------------------------------------------------------------
+// 3. Helper: Scatter Ore Vein
+// ------------------------------------------------------------------------------
+function placeOreVein(cx, cy, radius, oreBlock, chance) {
+    if (oreBlock == null) return;
+    for (var dx = -radius; dx <= radius; dx++) {
+        for (var dy = -radius; dy <= radius; dy++) {
+            var distSq = dx * dx + dy * dy;
+            if (distSq <= radius * radius && Mathf.chance(chance || 0.75)) {
+                var tx = cx + dx;
+                var ty = cy + dy;
+                var tile = Vars.world.tile(tx, ty);
+                if (tile != null && tile.floor() != null && !tile.floor().isLiquid) {
+                    tile.setOverlay(oreBlock);
+                }
+            }
+        }
+    }
+}
+
+// ------------------------------------------------------------------------------
+// 4. Sector Map Builders (Using Mod Environment Blocks)
+// ------------------------------------------------------------------------------
+function buildSectorTerrain(secNumber) {
+    var frostStone = getBlock("frost-stone") || Blocks.stone;
+    var permafrostIce = getBlock("permafrost-ice") || Blocks.ice;
+    var glacialSnow = getBlock("glacial-snow") || Blocks.snow;
+    var frostStoneWall = getBlock("frost-stone-wall") || Blocks.stoneWall;
+    var permafrostIceWall = getBlock("permafrost-ice-wall") || Blocks.iceWall;
+    var cryoBoulder = getBlock("cryo-boulder");
+
+    var oreGlacite = getBlock("ore-glacite");
+    var oreCryoShale = getBlock("ore-cryo-shale");
+    var oreBoreonite = getBlock("ore-boreonite");
+    var orePolarQuartz = getBlock("ore-polar-quartz");
+    var oreFrostMagnetite = getBlock("ore-frost-magnetite");
+    var oreBorealClathrate = getBlock("ore-boreal-clathrate");
+
+    var coreFrost = getBlock("core-frost") || Blocks.coreShard;
+    var coreGlacier = getBlock("core-glacier") || coreFrost;
+
+    var glaciteItem = getItem("glacite");
+    var cryoShaleItem = getItem("cryo-shale");
+    var boreoniteItem = getItem("boreonite");
+    var polarQuartzItem = getItem("polar-quartz");
+    var subzeroSiliconItem = getItem("subzero-silicon");
+
+    var W = Vars.world.width();
+    var H = Vars.world.height();
+    var seed = (secNumber * 31337 + 101) & 0x7FFFFFFF;
+
+    Log.info("[CryogenicFrontiers] Generating custom Nivalis terrain for sector " + secNumber + " (" + W + "x" + H + ")");
+
+    // A. Base Floor & Wall Passes
+    for (var x = 0; x < W; x++) {
+        for (var y = 0; y < H; y++) {
+            var tile = Vars.world.tile(x, y);
+            if (tile == null) continue;
+
+            // Border barrier
+            if (x < 6 || x >= W - 6 || y < 6 || y >= H - 6) {
+                tile.setFloor(frostStone);
+                tile.setBlock(frostStoneWall);
+                continue;
+            }
+
+            var nElev = Simplex.noise2d(seed, 4, 0.5, 1.0 / 45.0, x, y);
+            var nBiome = Simplex.noise2d(seed + 100, 3, 0.5, 1.0 / 35.0, x, y);
+            var nWater = Simplex.noise2d(seed + 200, 3, 0.5, 1.0 / 25.0, x, y);
+
+            // Floor selection
+            if (nBiome > 0.3) {
+                tile.setFloor(permafrostIce);
+            } else if (nBiome < -0.2) {
+                tile.setFloor(glacialSnow);
+            } else {
+                tile.setFloor(frostStone);
+            }
+
+            // Water streams / pools for Cryo Hydro-Turbine
+            if (nWater > 0.52 && nElev < 0.2) {
+                tile.setFloor(Blocks.water);
+            } else if (nWater > 0.44 && nElev < 0.15) {
+                tile.setFloor(Blocks.sandWater);
+            }
+
+            // Walls & Mountain Ridges
+            if (nElev > 0.48) {
+                tile.setBlock(frostStoneWall);
+            } else if (nElev > 0.40 && nBiome > 0.15) {
+                tile.setBlock(permafrostIceWall);
+            } else {
+                tile.setBlock(Blocks.air);
+                // Occasional boulder prop along cliff margins
+                if (cryoBoulder != null && nElev > 0.32 && Mathf.chance(0.04)) {
+                    tile.setBlock(cryoBoulder);
+                }
+            }
+        }
+    }
+
+    // B. Sector Specific Configurations
+    if (secNumber === 0) {
+        // --- Sector 0: Boreal Basin (Landing Site) ---
+        var pcX = Math.floor(W / 2);
+        var pcY = 40;
+
+        // Clear player landing zone
+        clearArea(pcX, pcY, 12, frostStone);
+
+        // Place Core: Frost
+        var cTile = Vars.world.tile(pcX, pcY);
+        cTile.setBlock(coreFrost, Vars.state.rules.defaultTeam, 0);
+
+        // Add starting resources to core
+        if (cTile.build != null && cTile.build.items != null) {
+            if (glaciteItem != null) cTile.build.items.add(glaciteItem, 400);
+            if (cryoShaleItem != null) cTile.build.items.add(cryoShaleItem, 300);
+            if (polarQuartzItem != null) cTile.build.items.add(polarQuartzItem, 150);
+            if (boreoniteItem != null) cTile.build.items.add(boreoniteItem, 100);
+        }
+
+        // Ore veins around player core
+        placeOreVein(pcX - 16, pcY + 6, 7, oreGlacite, 0.85);
+        placeOreVein(pcX + 16, pcY + 4, 7, oreCryoShale, 0.85);
+        placeOreVein(pcX - 12, pcY - 14, 6, oreBoreonite, 0.80);
+        placeOreVein(pcX + 14, pcY - 12, 6, orePolarQuartz, 0.80);
+
+        // Hydro water stream right near base for hydro turbines
+        for (var py = pcY - 8; py <= pcY + 8; py++) {
+            for (var px = pcX - 28; px <= pcX - 24; px++) {
+                var wt = Vars.world.tile(px, py);
+                if (wt != null) {
+                    wt.setFloor(Blocks.water);
+                    wt.setBlock(Blocks.air);
+                }
+            }
+        }
+
+        // Enemy spawn points at the north
+        var spX = pcX;
+        var spY = H - 25;
+        clearArea(spX, spY, 8, permafrostIce);
+        var spTile = Vars.world.tile(spX, spY);
+        if (spTile != null) spTile.setOverlay(Blocks.spawn);
+
+        // Rules & Wave Setup
+        Vars.state.rules.winWave = 25;
+        Vars.state.rules.waveTimer = true;
+        Vars.state.rules.initialWaveSpacing = 240 * 60; // 4.0 minutes prep
+        Vars.state.rules.waveSpacing = 75 * 60;
+
+        configureSectorWaves(25, 1);
+
+    } else if (secNumber === 12) {
+        // --- Sector 1: Quartz Valley ---
+        var pcX = 45;
+        var pcY = 45;
+
+        clearArea(pcX, pcY, 12, permafrostIce);
+        var cTile = Vars.world.tile(pcX, pcY);
+        cTile.setBlock(coreFrost, Vars.state.rules.defaultTeam, 0);
+
+        if (cTile.build != null && cTile.build.items != null) {
+            if (glaciteItem != null) cTile.build.items.add(glaciteItem, 500);
+            if (cryoShaleItem != null) cTile.build.items.add(cryoShaleItem, 400);
+            if (polarQuartzItem != null) cTile.build.items.add(polarQuartzItem, 250);
+            if (boreoniteItem != null) cTile.build.items.add(boreoniteItem, 200);
+        }
+
+        placeOreVein(pcX + 16, pcY + 4, 8, orePolarQuartz, 0.90);
+        placeOreVein(pcX + 6, pcY + 16, 8, oreBoreonite, 0.85);
+        placeOreVein(pcX - 14, pcY + 10, 6, oreGlacite, 0.80);
+        placeOreVein(pcX + 12, pcY - 14, 6, oreCryoShale, 0.80);
+        placeOreVein(pcX + 35, pcY + 35, 5, oreFrostMagnetite, 0.75);
+
+        // Enemy spawn NE
+        var spX = W - 35;
+        var spY = H - 35;
+        clearArea(spX, spY, 8, glacialSnow);
+        var spTile = Vars.world.tile(spX, spY);
+        if (spTile != null) spTile.setOverlay(Blocks.spawn);
+
+        Vars.state.rules.winWave = 30;
+        Vars.state.rules.waveTimer = true;
+        Vars.state.rules.initialWaveSpacing = 270 * 60; // 4.5 minutes prep
+        Vars.state.rules.waveSpacing = 75 * 60;
+
+        configureSectorWaves(30, 2);
+
+    } else if (secNumber === 28) {
+        // --- Sector 2: Subzero Crags ---
+        var pcX = 50;
+        var pcY = Math.floor(H / 2);
+
+        clearArea(pcX, pcY, 14, frostStone);
+        var cTile = Vars.world.tile(pcX, pcY);
+        cTile.setBlock(coreFrost, Vars.state.rules.defaultTeam, 0);
+
+        if (cTile.build != null && cTile.build.items != null) {
+            if (glaciteItem != null) cTile.build.items.add(glaciteItem, 600);
+            if (cryoShaleItem != null) cTile.build.items.add(cryoShaleItem, 500);
+            if (polarQuartzItem != null) cTile.build.items.add(polarQuartzItem, 350);
+            if (boreoniteItem != null) cTile.build.items.add(boreoniteItem, 250);
+            if (subzeroSiliconItem != null) cTile.build.items.add(subzeroSiliconItem, 150);
+        }
+
+        placeOreVein(pcX + 18, pcY + 8, 8, oreGlacite, 0.85);
+        placeOreVein(pcX + 18, pcY - 8, 8, oreCryoShale, 0.85);
+        placeOreVein(pcX + 8, pcY + 18, 7, orePolarQuartz, 0.85);
+        placeOreVein(pcX + 8, pcY - 18, 7, oreBoreonite, 0.85);
+        placeOreVein(pcX + 28, pcY + 22, 6, oreFrostMagnetite, 0.80);
+        placeOreVein(pcX + 28, pcY - 22, 6, oreBorealClathrate, 0.80);
+
+        // Dual East spawns
+        var sp1X = W - 35; var sp1Y = pcY - 45;
+        var sp2X = W - 35; var sp2Y = pcY + 45;
+        clearArea(sp1X, sp1Y, 8, permafrostIce);
+        clearArea(sp2X, sp2Y, 8, permafrostIce);
+        var t1 = Vars.world.tile(sp1X, sp1Y); if (t1 != null) t1.setOverlay(Blocks.spawn);
+        var t2 = Vars.world.tile(sp2X, sp2Y); if (t2 != null) t2.setOverlay(Blocks.spawn);
+
+        Vars.state.rules.winWave = 35;
+        Vars.state.rules.waveTimer = true;
+        Vars.state.rules.initialWaveSpacing = 300 * 60; // 5.0 minutes prep
+        Vars.state.rules.waveSpacing = 70 * 60;
+
+        configureSectorWaves(35, 3);
+
+    } else if (secNumber === 44) {
+        // --- Sector 3: Glacial Citadel (ATTACK MAP: 2 Crux Cores) ---
+        var pcX = Math.floor(W / 2);
+        var pcY = 40;
+
+        clearArea(pcX, pcY, 14, frostStone);
+        var cTile = Vars.world.tile(pcX, pcY);
+        cTile.setBlock(coreFrost, Vars.state.rules.defaultTeam, 0);
+
+        if (cTile.build != null && cTile.build.items != null) {
+            if (glaciteItem != null) cTile.build.items.add(glaciteItem, 800);
+            if (cryoShaleItem != null) cTile.build.items.add(cryoShaleItem, 600);
+            if (polarQuartzItem != null) cTile.build.items.add(polarQuartzItem, 400);
+            if (boreoniteItem != null) cTile.build.items.add(boreoniteItem, 300);
+            if (subzeroSiliconItem != null) cTile.build.items.add(subzeroSiliconItem, 200);
+        }
+
+        // Rich player resource cluster
+        placeOreVein(pcX - 18, pcY + 6, 8, oreGlacite, 0.85);
+        placeOreVein(pcX + 18, pcY + 6, 8, oreCryoShale, 0.85);
+        placeOreVein(pcX - 12, pcY - 14, 7, orePolarQuartz, 0.85);
+        placeOreVein(pcX + 12, pcY - 14, 7, oreBoreonite, 0.85);
+        placeOreVein(pcX - 30, pcY + 15, 6, oreFrostMagnetite, 0.80);
+        placeOreVein(pcX + 30, pcY + 15, 6, oreBorealClathrate, 0.80);
+
+        // Crux Stronghold 1: Eastern Outpost Core
+        var e1X = W - 60;
+        var e1Y = H - 65;
+        clearArea(e1X, e1Y, 14, permafrostIce);
+        var ec1 = Vars.world.tile(e1X, e1Y);
+        ec1.setBlock(coreFrost, Team.crux, 0);
+        buildCruxFortification(e1X, e1Y, 1);
+
+        // Crux Stronghold 2: Northern Citadel Core
+        var e2X = 65;
+        var e2Y = H - 55;
+        clearArea(e2X, e2Y, 16, permafrostIce);
+        var ec2 = Vars.world.tile(e2X, e2Y);
+        ec2.setBlock(coreGlacier, Team.crux, 0);
+        buildCruxFortification(e2X, e2Y, 2);
+
+        // Attack map rules: Win by destroying all enemy cores!
+        Vars.state.rules.attackMode = true;
+        Vars.state.rules.winWave = 0;
+        Vars.state.rules.waveTimer = true;
+        Vars.state.rules.initialWaveSpacing = 360 * 60; // 6.0 minutes ceasefire
+        Vars.state.rules.waveSpacing = 85 * 60;
+
+        configureSectorWaves(60, 4);
+    }
+
+    Log.info("[CryogenicFrontiers] Nivalis Sector " + secNumber + " generated successfully!");
+}
+
+// ------------------------------------------------------------------------------
+// 5. Helper: Clear Area of Walls & Set Floor
+// ------------------------------------------------------------------------------
+function clearArea(cx, cy, rad, floorBlock) {
+    for (var dx = -rad; dx <= rad; dx++) {
+        for (var dy = -rad; dy <= rad; dy++) {
+            if (dx * dx + dy * dy <= rad * rad) {
+                var t = Vars.world.tile(cx + dx, cy + dy);
+                if (t != null) {
+                    t.setFloor(floorBlock);
+                    t.setBlock(Blocks.air);
+                    t.setOverlay(Blocks.air);
+                }
+            }
+        }
+    }
+}
+
+// ------------------------------------------------------------------------------
+// 6. Helper: Crux Base Fortifications for Attack Map
+// ------------------------------------------------------------------------------
+function buildCruxFortification(cx, cy, tier) {
+    var glaciteWallLarge = getBlock("glacite-wall-large") || Blocks.copperWallLarge;
+    var cryoWallLarge = getBlock("cryo-wall-large") || glaciteWallLarge;
+    var shieldedWallLarge = getBlock("shielded-cryo-wall-large") || cryoWallLarge;
+
+    var frostbite = getBlock("frostbite");
+    var permafrost = getBlock("permafrost");
+    var blizzard = getBlock("blizzard");
+    var glacialis = getBlock("glacialis");
+
+    var wallBlock = tier === 1 ? cryoWallLarge : shieldedWallLarge;
+
+    // Defense ring (cardinal wall bastions)
+    var offsets = [-6, 6];
+    for (var i = 0; i < offsets.length; i++) {
+        var ox = offsets[i];
+        var tWallX = Vars.world.tile(cx + ox, cy);
+        if (tWallX != null) tWallX.setBlock(wallBlock, Team.crux, 0);
+
+        var tWallY = Vars.world.tile(cx, cy + ox);
+        if (tWallY != null) tWallY.setBlock(wallBlock, Team.crux, 0);
+    }
+
+    // Defensive Turrets
+    var tTurret1 = Vars.world.tile(cx + 8, cy + 8);
+    var tTurret2 = Vars.world.tile(cx - 8, cy + 8);
+    var tTurret3 = Vars.world.tile(cx, cy - 8);
+
+    if (tTurret1 != null && frostbite != null) tTurret1.setBlock(frostbite, Team.crux, 0);
+    if (tTurret2 != null && permafrost != null) tTurret2.setBlock(permafrost, Team.crux, 0);
+    if (tTurret3 != null) {
+        var heavyTurret = tier === 1 ? permafrost : (glacialis || blizzard || permafrost);
+        if (heavyTurret != null) tTurret3.setBlock(heavyTurret, Team.crux, 0);
+    }
+}
+
+// ------------------------------------------------------------------------------
+// 7. Helper: Configure Wave Composition
+// ------------------------------------------------------------------------------
+function configureSectorWaves(totalWaves, threatLevel) {
+    var sleet = getUnit("sleet");
+    var boreas = getUnit("boreas");
+    var hailstorm = getUnit("hailstorm");
+    var tempest = getUnit("tempest");
+
+    if (Vars.state.rules.spawns == null) return;
+    Vars.state.rules.spawns.clear();
+
+    // Sleet walkers (Tier 1 Ground)
+    if (sleet != null) {
+        var gSleet = new SpawnGroup(sleet);
+        gSleet.begin = 1;
+        gSleet.end = totalWaves;
+        gSleet.unitAmount = 2 + threatLevel;
+        gSleet.unitScaling = 3.0;
+        gSleet.spacing = 1;
+        Vars.state.rules.spawns.add(gSleet);
+    }
+
+    // Boreas interceptors (Tier 1 Air)
+    if (boreas != null) {
+        var gBoreas = new SpawnGroup(boreas);
+        gBoreas.begin = 3;
+        gBoreas.end = totalWaves;
+        gBoreas.unitAmount = 1 + threatLevel;
+        gBoreas.unitScaling = 4.0;
+        gBoreas.spacing = 2;
+        Vars.state.rules.spawns.add(gBoreas);
+    }
+
+    // Tier 2 Units on higher threat levels
+    if (threatLevel >= 2 && hailstorm != null) {
+        var gHail = new SpawnGroup(hailstorm);
+        gHail.begin = 10;
+        gHail.end = totalWaves;
+        gHail.unitAmount = 1;
+        gHail.unitScaling = 5.0;
+        gHail.spacing = 3;
+        Vars.state.rules.spawns.add(gHail);
+    }
+
+    if (threatLevel >= 3 && tempest != null) {
+        var gTempest = new SpawnGroup(tempest);
+        gTempest.begin = 15;
+        gTempest.end = totalWaves;
+        gTempest.unitAmount = 1;
+        gTempest.unitScaling = 6.0;
+        gTempest.spacing = 3;
+        Vars.state.rules.spawns.add(gTempest);
+    }
+}
+
+// ------------------------------------------------------------------------------
+// 8. World Load & Sector Entry Hooks
+// ------------------------------------------------------------------------------
+Events.on(EventType.WorldLoadEvent, cons(function(e) {
+    patchWaterAttributes();
+
+    try {
+        if (!Vars.state.isCampaign()) return;
+        var sec = Vars.state.getSector();
+        if (sec == null || sec.planet == null) return;
+
+        var planetName = "" + sec.planet.name;
+        if (planetName.indexOf("nivalis") === -1) return;
+
+        Log.info("[CryogenicFrontiers] Entered Nivalis campaign sector: " + sec.id);
+
+        // Check if sector requires initial generation
+        // A sector is uninitialized if the default team has no active cores
+        var coreFrost = getBlock("core-frost") || Blocks.coreShard;
+        var hasPlayerCore = false;
+        var cores = Vars.state.rules.defaultTeam.cores();
+        if (cores != null && !cores.isEmpty()) {
+            hasPlayerCore = true;
+        }
+
+        if (!hasPlayerCore || Vars.state.wave <= 1) {
+            buildSectorTerrain(sec.id);
+        }
+    } catch (err) {
+        Log.err("[CryogenicFrontiers] Error initializing Nivalis campaign world: " + err);
+    }
+}));
+
+// Re-apply shallow water patch on client load
 Events.on(EventType.ClientLoadEvent, cons(function(e) {
     patchWaterAttributes();
 }));
 
-Events.on(EventType.WorldLoadEvent, cons(function(e) {
-    patchWaterAttributes();
-}));
+// Initial immediate patch execution
+patchWaterAttributes();

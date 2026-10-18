@@ -1,7 +1,7 @@
 # Cryogenic Frontiers - Mindustry Mod
 
 [![Mindustry Version](https://img.shields.io/badge/Mindustry-v7%20%2F%20v8%20(Build%20136%2B)-6ecdec.svg)](https://github.com/Anuken/Mindustry)
-[![Mod Version](https://img.shields.io/badge/Version-2.7.0-4be3b0.svg)](file:///e:/Mindustry_Mods/mod.hjson)
+[![Mod Version](https://img.shields.io/badge/Version-2.9.0-4be3b0.svg)](file:///e:/Mindustry_Mods/mod.hjson)
 [![License](https://img.shields.io/badge/Ecosystem-100%25%20Standalone-78f3e5.svg)](#)
 
 **Cryogenic Frontiers** is a massive standalone technological expansion for **Mindustry** (supporting v7 and v8 build 136+). It introduces a completely self-contained technological progression featuring **zero dependencies** on vanilla Serpulo/Erekir resources, ammo, or crafting trees.
@@ -169,6 +169,30 @@ The 6 natural ores are divided into two distinct extraction tiers, creating a me
 
 ---
 
+## Planet Nivalis & Standalone Campaign
+
+**Nivalis** is an icy celestial world locked in perpetual sub-zero conditions. It features a standalone star-map campaign with its own planetary mesh, custom environmental terrain blocks, generous starting preparation timers, and a progressive 4-sector expansion ending in a grand 2-core Attack Map assault.
+
+### 1. Custom Environmental Terrain & Props
+- **Frost Stone** (`frost-stone`): Dense, ancient permafrost bedrock floor forming vast tundra basins.
+- **Permafrost Ice** (`permafrost-ice`): Slick crystalline ice sheets granting a 1.2x movement speed multiplier with reduced surface drag.
+- **Glacial Snow** (`glacial-snow`): Deep, packed sub-zero snow crust slowing unit traverse speed (0.85x speed multiplier).
+- **Frost Stone Wall** (`frost-stone-wall`): Towering natural mountain barriers of dense frozen bedrock.
+- **Permafrost Ice Wall** (`permafrost-ice-wall`): Crystalline mountain crests and glacial cliffs.
+- **Cryo Boulder** (`cryo-boulder`): Scattered natural rock fragments and glacial debris.
+- **Glacial Meltwater Pools**: Shallow water bodies supporting direct deployment of **Cryo Hydro-Turbines**.
+
+### 2. Campaign Sector Progression
+
+| Sector | Name | Mode | Threat | Win Condition | Prep Time | Strategic Focus |
+| :---: | :--- | :---: | :---: | :---: | :---: | :--- |
+| **0** | **Boreal Basin** | Survival | Low (1) | Wave 25 | **4.0 min** | Primary expedition landing. Establish Glacite & Cryo-Shale mining, Hydro-Turbine power, and early Frostbite defenses. |
+| **12** | **Quartz Valley** | Survival | Medium (2) | Wave 30 | **4.5 min** | Glacial rift rich in Polar Quartz and Boreonite. Deploy Cryo-Synthesizers, Cryo-Glass Kilns, and Stirling generators. |
+| **28** | **Subzero Crags** | Survival | High (3) | Wave 35 | **5.0 min** | High-altitude plateau with dual attack vectors. Mine Frost-Magnetite and Boreal Clathrate; deploy Boreas squadrons and Hailstorm mechs. |
+| **44** | **Glacial Citadel** | **Attack Map** | Extreme (5) | **Destroy 2 Crux Cores** | **6.0 min** | Climax stronghold assault. Infiltrate and eliminate both fortified Crux command bases (Outpost & Citadel). |
+
+---
+
 ## Installation & How to Play
 
 ### Option 1: Direct Folder Copy (Recommended)
@@ -181,7 +205,7 @@ Copy this entire mod folder to your Mindustry mods directory:
 ### Option 2: Import ZIP in Mindustry
 1. Launch **Mindustry**.
 2. Click **Mods** -> **Import Mod**.
-3. Select `cryogenic-frontiers.zip`.
+3. Select `cryogenic-frontiers-campaign.zip` (or `cryogenic-frontiers.zip`).
 4. Mindustry will extract, verify, and enable the mod immediately!
 
 ---
@@ -190,5 +214,6 @@ Copy this entire mod folder to your Mindustry mods directory:
 
 - **Mod Author**: `sonip362`
 - **Mod Name**: `cryogenic-frontiers`
-- **Version**: `2.7.0`
+- **Version**: `2.9.0`
 - **Compatibility**: Mindustry v7 & v8 (Build 136+)
+

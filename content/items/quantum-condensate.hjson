@@ -1,6 +1,5 @@
 name: "Quantum Condensate"
 description: "A pinnacle Bose-Einstein state of matter suspended at fractions of a microkelvin. Exhibiting macro-quantum entanglement, it fuels singularity weapons and zero-point power cores."
-type: material
 cost: 5.0
 color: "c2f6ff"
 explosiveness: 0.8

@@ -5,7 +5,6 @@ size: 1
 health: 120
 range: 5
 transportTime: 3.5
-bufferCapacity: 20
 requirements: [
   glacite/6
   cryo-shale/6

@@ -1,0 +1,7 @@
+planet: nivalis
+sector: 0
+difficulty: 1
+captureWave: 25
+alwaysUnlocked: true
+allowLaunchLoadout: false
+allowLaunchSchematics: false

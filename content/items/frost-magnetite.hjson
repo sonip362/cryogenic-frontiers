@@ -1,6 +1,5 @@
 name: "Frost-Magnetite"
 description: "A natural magnetic ore extracted from deep permafrost strata. Essential for magnetic induction coils, mass accelerators, and levitation logistics."
-type: material
 hardness: 2
 cost: 1.2
 color: "3e4f6d"

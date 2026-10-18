@@ -1,6 +1,5 @@
 name: "Cryo-Shale"
 description: "A dense, conductive ballistic mineral extracted from sub-zero bedrock strata. Replaces lead in heavy munition loads and electrical wiring."
-type: material
 hardness: 1
 cost: 1.0
 color: "546a85"

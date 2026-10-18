@@ -14,5 +14,9 @@ requirements: [
   polar-quartz/300
 ]
 category: effect
-research: core-frost
+research: {
+  root: true
+  name: "core-frost"
+  planet: "nivalis"
+}
 alwaysUnlocked: true

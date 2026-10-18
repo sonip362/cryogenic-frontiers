@@ -1,6 +1,5 @@
 name: "Glacite"
 description: "A resilient cold-forged dense iron-ice mineral. The fundamental structural building block of cryogenic technology."
-type: material
 hardness: 1
 cost: 1.0
 color: "7294b8"

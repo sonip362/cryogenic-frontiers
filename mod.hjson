@@ -19,8 +19,9 @@ Features:
 - Logistics Suite: Complete solid & liquid cryogenic transport networks
 - Heavy Turrets: Frostbite, Permafrost, Absolute Zero, Glacialis Railgun, Blizzard Rotary Cannon, Avalanche Torpedo Launcher
 - Fortifications: Glacite Walls, Cryo Nova Walls, Shielded Superconducting Walls
+- Custom Campaign Planet: Nivalis (4 Progressive Sectors with custom environmental blocks, 4+ min prep timers, and climax 2-Core Attack Map)
 '''
-version: "2.8.0"
+version: "2.9.0"
 minGameVersion: "136"
 hasScripts: true
 hidden: false

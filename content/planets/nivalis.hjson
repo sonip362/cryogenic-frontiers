@@ -1,0 +1,87 @@
+localizedName: "Nivalis"
+description: "A frozen outer planet characterized by perpetual blizzards, vast nitrogen-methane permafrost, and rich cryogenic minerals."
+parent: sun
+solarSystem: sun
+radius: 1.2
+minZoom: 0.6
+camRadius: 1.2
+visible: true
+accessible: true
+hasAtmosphere: true
+atmosphereColor: "6ecdec"
+atmosphereRadIn: 0.02
+atmosphereRadOut: 0.3
+startSector: 0
+sectorSize: 1
+alwaysUnlocked: true
+clearSectorOnLose: true
+allowLaunchToNumbered: false
+allowWaveSimulation: false
+defaultCore: "core-frost"
+unlockedOnLand: [
+  "core-frost"
+]
+techTree: "core-frost"
+generator: SerpuloPlanetGenerator
+itemWhitelist: [
+  "glacite",
+  "cryo-shale",
+  "boreonite",
+  "polar-quartz",
+  "subzero-silicon",
+  "cryo-glass",
+  "gelid-polymer",
+  "cryo-fiber",
+  "endothermic-salt",
+  "cryo-processor",
+  "aero-glacite",
+  "superconducting-solenoid",
+  "cryo-crystal",
+  "cryo-alloy",
+  "frost-magnetite",
+  "boreal-clathrate",
+  "cryo-nanites",
+  "quantum-condensate"
+]
+mesh: [
+  {
+    type: NoiseMesh
+    planet: nivalis
+    seed: 52
+    color1: "18324b"
+    color2: "3a7d9e"
+    divisions: 5
+    radius: 1.2
+    octaves: 4
+    persistence: 0.7
+    scale: 0.9
+    mag: 1.3
+  },
+  {
+    type: NoiseMesh
+    planet: nivalis
+    seed: 88
+    color1: "68b2d4"
+    color2: "d8f4ff"
+    divisions: 5
+    radius: 1.22
+    octaves: 5
+    persistence: 0.8
+    scale: 1.2
+    mag: 0.9
+  }
+]
+cloudMesh: [
+  {
+    type: HexSkyMesh
+    planet: nivalis
+    speed: 1.4
+    divisions: 6
+    radius: 0.12
+    color: "bbf1ffbb"
+    octaves: 3
+    persistence: 0.6
+    scl: 0.9
+    thresh: 0.45
+  }
+]

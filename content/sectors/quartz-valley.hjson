@@ -1,0 +1,7 @@
+planet: nivalis
+sector: 12
+difficulty: 2
+captureWave: 30
+research: boreal-basin
+allowLaunchLoadout: false
+allowLaunchSchematics: false

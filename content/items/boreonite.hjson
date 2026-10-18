@@ -1,6 +1,5 @@
 name: "Boreonite"
 description: "A volatile cryogenic hydrocarbon mineral rich in trapped reactive gases. Highly flammable and serves as the primary thermal fuel source."
-type: material
 hardness: 2
 cost: 1.2
 color: "4be3b0"
