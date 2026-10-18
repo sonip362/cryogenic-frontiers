@@ -75,6 +75,51 @@ function placeOreVein(cx, cy, radius, oreBlock, chance) {
     }
 }
 
+function carveCorridor(x1, y1, x2, y2, radius, floorTile) {
+    var dx = x2 - x1;
+    var dy = y2 - y1;
+    var dist = Math.sqrt(dx * dx + dy * dy);
+    if (dist < 1) return;
+    var steps = Math.floor(dist * 1.5);
+    for (var i = 0; i <= steps; i++) {
+        var t = i / steps;
+        var meander = Math.sin(t * Math.PI * 2.5) * (radius * 0.7);
+        var cx = Math.floor(x1 + dx * t - (dy / dist) * meander);
+        var cy = Math.floor(y1 + dy * t + (dx / dist) * meander);
+        clearArea(cx, cy, radius, floorTile);
+    }
+}
+
+function smoothTerrain(frostStoneWall, permafrostIceWall, passes) {
+    var W = Vars.world.width();
+    var H = Vars.world.height();
+    for (var p = 0; p < (passes || 2); p++) {
+        var toClear = [];
+        var toWall = [];
+        for (var x = 8; x < W - 8; x++) {
+            for (var y = 8; y < H - 8; y++) {
+                var t = Vars.world.tile(x, y);
+                if (t == null) continue;
+                var wallNeighbors = 0;
+                for (var ox = -1; ox <= 1; ox++) {
+                    for (var oy = -1; oy <= 1; oy++) {
+                        if (ox === 0 && oy === 0) continue;
+                        var n = Vars.world.tile(x + ox, y + oy);
+                        if (n != null && n.solid()) wallNeighbors++;
+                    }
+                }
+                if (t.solid() && wallNeighbors < 3) {
+                    toClear.push(t);
+                } else if (!t.solid() && wallNeighbors >= 6) {
+                    toWall.push(t);
+                }
+            }
+        }
+        for (var i = 0; i < toClear.length; i++) toClear[i].setBlock(Blocks.air);
+        for (var i = 0; i < toWall.length; i++) toWall[i].setBlock(frostStoneWall);
+    }
+}
+
 // ------------------------------------------------------------------------------
 // 4. Sector Map Builders (Using Mod Environment Blocks)
 // ------------------------------------------------------------------------------
@@ -108,7 +153,11 @@ function buildSectorTerrain(secNumber) {
 
     Log.info("[CryogenicFrontiers] Generating custom Nivalis terrain for sector " + secNumber + " (" + W + "x" + H + ")");
 
-    // A. Base Floor & Wall Passes
+    // A. Base Floor & Wall Passes using low-frequency ridged noise
+    var ridgeScale = 1.0 / 85.0;
+    var biomeScale = 1.0 / 110.0;
+    var elevScale = 1.0 / 140.0;
+
     for (var x = 0; x < W; x++) {
         for (var y = 0; y < H; y++) {
             var tile = Vars.world.tile(x, y);
@@ -121,12 +170,13 @@ function buildSectorTerrain(secNumber) {
                 continue;
             }
 
-            var nElev = Simplex.noise2d(seed, 4, 0.5, 1.0 / 45.0, x, y);
-            var nBiome = Simplex.noise2d(seed + 100, 3, 0.5, 1.0 / 35.0, x, y);
-            var nWater = Simplex.noise2d(seed + 200, 3, 0.5, 1.0 / 25.0, x, y);
+            var nCont = Simplex.noise2d(seed, 3, 0.5, elevScale, x, y);
+            var nRidge = 1.0 - Math.abs(Simplex.noise2d(seed + 50, 4, 0.5, ridgeScale, x, y));
+            var nBiome = Simplex.noise2d(seed + 100, 3, 0.5, biomeScale, x, y);
+            var nRiver = 1.0 - Math.abs(Simplex.noise2d(seed + 200, 3, 0.5, 1.0 / 95.0, x, y));
 
-            // Floor selection
-            if (nBiome > 0.3) {
+            // Floor selection (large continuous biomes)
+            if (nBiome > 0.25) {
                 tile.setFloor(permafrostIce);
             } else if (nBiome < -0.2) {
                 tile.setFloor(glacialSnow);
@@ -134,27 +184,35 @@ function buildSectorTerrain(secNumber) {
                 tile.setFloor(frostStone);
             }
 
-            // Water streams / pools for Cryo Hydro-Turbine
-            if (nWater > 0.52 && nElev < 0.2) {
+            // Natural winding water river channels in valleys
+            if (nRiver > 0.88 && nCont < 0.2) {
                 tile.setFloor(Blocks.water);
-            } else if (nWater > 0.44 && nElev < 0.15) {
+                tile.setBlock(Blocks.air);
+                continue;
+            } else if (nRiver > 0.82 && nCont < 0.15) {
                 tile.setFloor(Blocks.sandWater);
             }
 
-            // Walls & Mountain Ridges
-            if (nElev > 0.48) {
+            // Continuous mountain ridges & canyons (connected mountain walls)
+            if (nRidge > 0.68 && nCont > -0.25) {
+                if (nBiome > 0.3) {
+                    tile.setBlock(permafrostIceWall);
+                } else {
+                    tile.setBlock(frostStoneWall);
+                }
+            } else if (nCont > 0.55) {
                 tile.setBlock(frostStoneWall);
-            } else if (nElev > 0.40 && nBiome > 0.15) {
-                tile.setBlock(permafrostIceWall);
             } else {
                 tile.setBlock(Blocks.air);
-                // Occasional boulder prop along cliff margins
-                if (cryoBoulder != null && nElev > 0.32 && Mathf.chance(0.04)) {
+                if (cryoBoulder != null && nRidge > 0.55 && Mathf.chance(0.03)) {
                     tile.setBlock(cryoBoulder);
                 }
             }
         }
     }
+
+    // Clean up scattered single-tile dots with cellular automata
+    smoothTerrain(frostStoneWall, permafrostIceWall, 2);
 
     // B. Sector Specific Configurations
     if (secNumber === 0) {
@@ -201,6 +259,14 @@ function buildSectorTerrain(secNumber) {
         var spTile = Vars.world.tile(spX, spY);
         if (spTile != null) spTile.setOverlay(Blocks.spawn);
 
+        // Guaranteed wide continuous path from Core to Spawn
+        carveCorridor(pcX, pcY, spX, spY, 8, permafrostIce);
+        // Flanking side paths for natural maneuvering and base expansion
+        carveCorridor(pcX, pcY, pcX - 35, pcY + 45, 6, glacialSnow);
+        carveCorridor(pcX - 35, pcY + 45, spX - 25, spY - 20, 6, glacialSnow);
+        carveCorridor(pcX, pcY, pcX + 35, pcY + 45, 6, frostStone);
+        carveCorridor(pcX + 35, pcY + 45, spX + 25, spY - 20, 6, frostStone);
+
         // Rules & Wave Setup
         Vars.state.rules.winWave = 25;
         Vars.state.rules.waveTimer = true;
@@ -214,7 +280,7 @@ function buildSectorTerrain(secNumber) {
         var pcX = 45;
         var pcY = 45;
 
-        clearArea(pcX, pcY, 12, permafrostIce);
+        clearArea(pcX, pcY, 14, permafrostIce);
         var cTile = Vars.world.tile(pcX, pcY);
         cTile.setBlock(coreFrost, Vars.state.rules.defaultTeam, 0);
 
@@ -234,9 +300,15 @@ function buildSectorTerrain(secNumber) {
         // Enemy spawn NE
         var spX = W - 35;
         var spY = H - 35;
-        clearArea(spX, spY, 8, glacialSnow);
+        clearArea(spX, spY, 10, glacialSnow);
         var spTile = Vars.world.tile(spX, spY);
         if (spTile != null) spTile.setOverlay(Blocks.spawn);
+
+        // Winding valley corridor connecting SW player to NE enemy spawn
+        carveCorridor(pcX, pcY, Math.floor(W / 2), Math.floor(H / 2), 8, permafrostIce);
+        carveCorridor(Math.floor(W / 2), Math.floor(H / 2), spX, spY, 8, permafrostIce);
+        carveCorridor(pcX, pcY, W - 40, 50, 7, frostStone);
+        carveCorridor(W - 40, 50, spX, spY, 7, frostStone);
 
         Vars.state.rules.winWave = 30;
         Vars.state.rules.waveTimer = true;
@@ -272,10 +344,14 @@ function buildSectorTerrain(secNumber) {
         // Dual East spawns
         var sp1X = W - 35; var sp1Y = pcY - 45;
         var sp2X = W - 35; var sp2Y = pcY + 45;
-        clearArea(sp1X, sp1Y, 8, permafrostIce);
-        clearArea(sp2X, sp2Y, 8, permafrostIce);
+        clearArea(sp1X, sp1Y, 10, permafrostIce);
+        clearArea(sp2X, sp2Y, 10, permafrostIce);
         var t1 = Vars.world.tile(sp1X, sp1Y); if (t1 != null) t1.setOverlay(Blocks.spawn);
         var t2 = Vars.world.tile(sp2X, sp2Y); if (t2 != null) t2.setOverlay(Blocks.spawn);
+
+        // Continuous canyon channels from west core to both east spawns
+        carveCorridor(pcX, pcY, sp1X, sp1Y, 8, frostStone);
+        carveCorridor(pcX, pcY, sp2X, sp2Y, 8, glacialSnow);
 
         Vars.state.rules.winWave = 35;
         Vars.state.rules.waveTimer = true;
@@ -312,7 +388,7 @@ function buildSectorTerrain(secNumber) {
         // Crux Stronghold 1: Eastern Outpost Core
         var e1X = W - 60;
         var e1Y = H - 65;
-        clearArea(e1X, e1Y, 14, permafrostIce);
+        clearArea(e1X, e1Y, 16, permafrostIce);
         var ec1 = Vars.world.tile(e1X, e1Y);
         ec1.setBlock(coreFrost, Team.crux, 0);
         buildCruxFortification(e1X, e1Y, 1);
@@ -320,10 +396,15 @@ function buildSectorTerrain(secNumber) {
         // Crux Stronghold 2: Northern Citadel Core
         var e2X = 65;
         var e2Y = H - 55;
-        clearArea(e2X, e2Y, 16, permafrostIce);
+        clearArea(e2X, e2Y, 18, permafrostIce);
         var ec2 = Vars.world.tile(e2X, e2Y);
         ec2.setBlock(coreGlacier, Team.crux, 0);
         buildCruxFortification(e2X, e2Y, 2);
+
+        // Continuous attack avenues from player base to both Crux bases
+        carveCorridor(pcX, pcY, e1X, e1Y, 9, permafrostIce);
+        carveCorridor(pcX, pcY, e2X, e2Y, 9, frostStone);
+        carveCorridor(e1X, e1Y, e2X, e2Y, 7, glacialSnow);
 
         // Attack map rules: Win by destroying all enemy cores!
         Vars.state.rules.attackMode = true;
