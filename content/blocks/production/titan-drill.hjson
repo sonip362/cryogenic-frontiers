@@ -1,33 +1,30 @@
 type: Drill
 name: "Titan Drill"
-description: "A colossal industrial excavation platform capable of fracturing the hardest geological formations. Features extreme mining throughput across a massive 5x5 survey footprint, boosted with Chilled Water."
+description: "A heavy industrial excavation platform capable of fracturing dense geological formations. Required to extract hard volatile deposits (Boreonite, Frost-Magnetite, Boreal Clathrate). Requires electrical power and can be boosted with Chilled Water."
 size: 5
-tier: 5
-drillTime: 110
-itemCapacity: 60
-liquidBoostIntensity: 2.2
+tier: 2
+drillTime: 150
+itemCapacity: 40
+liquidBoostIntensity: 1.8
 warmupSpeed: 0.015
 rotateSpeed: 4.5
 drawMineItem: true
 hasPower: true
 hasLiquids: true
 consumes: {
-  power: 6.5
+  power: 2.2
   liquid: {
     liquid: chilled-water
-    amount: 0.25
+    amount: 0.1
     optional: true
     booster: true
   }
 }
 requirements: [
-  glacite/240
-  subzero-silicon/160
-  cryo-crystal/90
-  cryo-alloy/60
-  aero-glacite/35
-  cryo-nanites/25
-  superconducting-solenoid/30
+  glacite/130
+  cryo-shale/90
+  polar-quartz/60
+  subzero-silicon/40
 ]
 category: production
 research: cryo-drill

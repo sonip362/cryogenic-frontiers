@@ -11,7 +11,7 @@ accel: 0.12
 drag: 0.05
 rotateSpeed: 15
 mineSpeed: 7.0
-mineTier: 2
+mineTier: 1
 buildSpeed: 0.8
 itemCapacity: 40
 hitSize: 8

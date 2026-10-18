@@ -50,30 +50,40 @@ From shallow-water kinetic hydro-turbines and sub-zero crystal refining to biped
 ## Materials & Economy
 
 ### 1. Natural Geological Ores
-| Ore | Description | Primary Uses |
-| :--- | :--- | :--- |
-| **Glacite** (`glacite`) | Brittle, highly conductive icy crystal mineral. | Structural frames, basic conveyors, crafter casings, kinetic ammo. |
-| **Cryo-Shale** (`cryo-shale`) | Dense metamorphic rock layered with sub-zero mineral frost. | Structural ballast, wall reinforcement, thermal insulation, heavy mortar shells. |
-| **Boreonite** (`boreonite`) | Heavy mineral matrix containing polarized magnetic inclusions. | Crystallization catalyst, Stirling generator fuel, magnetic torpedoes. |
-| **Polar Quartz** (`polar-quartz`) | Prismatic crystalline silica with exceptional optical and dielectric traits. | Optical glass synthesis, silicon distillation, fiber extrusion, laser optics. |
-| **Frost-Magnetite** (`frost-magnetite`) | Natural lodestone with intense magnetic field properties. | Superconducting solenoids, magnetic accelerator coils. |
-| **Boreal Clathrate** (`boreal-clathrate`) | Volatile hydrocarbon-methane ice cage formed under extreme pressure. | Synthetic polymer synthesis, specialized chemical fuels. |
+The 6 natural ores are divided into two distinct extraction tiers, creating a meaningful progression loop between the early-game **Cryo Drill** and the advanced **Titan Drill**:
+
+| Ore | Required Drill | Hardness | Visual Archetype | Accent | Description & Primary Uses |
+| :--- | :---: | :---: | :--- | :--- | :--- |
+| **Glacite** (`glacite`) | **Cryo Drill** (Tier 1+) | 1 | Clustered Boulders (*Copper-style*) | Steel / Glacial Cyan (`#7294b8`) | Foundational structural iron-ice mineral. Used in conveyors, structural frames, and kinetic ammo. |
+| **Cryo-Shale** (`cryo-shale`) | **Cryo Drill** (Tier 1+) | 1 | Bedrock Strata (*Coal-style*) | Cool Slate Grey (`#546a85`) | Dense conductive bedrock strata mineral. Replaces lead in heavy munition loads, mortars, and silicon synthesis. |
+| **Polar Quartz** (`polar-quartz`) | **Cryo Drill** (Tier 1+) | 1 | Prismatic Crystals (*Thorium-style*) | Glacial Ice-White (`#b2e8f7`) | Glacial silica crystal. Essential for microchips, optical glass, and laser optics. |
+| **Boreonite** (`boreonite`) | **Titan Drill** (Tier 2+) | 2 | Faceted Chunks (*Titanium-style*) | **Vibrant Emerald Green** (`#4be3b0`) | Highly reactive cryogenic hydrocarbon fuel mineral. Used in Stirling generation, Endothermic Salt, and heavy torpedoes. |
+| **Frost-Magnetite** (`frost-magnetite`) | **Titan Drill** (Tier 2+) | 2 | Dense Pebbles (*Lead-style*) | Ferromagnetic Dark Iron (`#3e4f6d`) | Natural lodestone ore with intense magnetic properties. Used in superconducting solenoids and railgun coils. |
+| **Boreal Clathrate** (`boreal-clathrate`) | **Titan Drill** (Tier 2+) | 2 | Lattice Shards (*Scrap-style*) | Methane-Ice Turquoise (`#6ee3b4`) | Volatile gas hydrate crystal cages trapped under ice. Essential for Gelid Polymer synthesis and turbine fuel. |
 
 ---
 
-### 2. Manufactured Industrial Materials
+### 2. Mining Drills & Progression
+| Drill | Size | Tier | Drill Time | Footprint / Capacity | Power Drain | Requirements | Role & Capability |
+| :--- | :---: | :---: | :---: | :---: | :--- | :--- | :--- |
+| **Cryo Drill** | 3×3 | **1** | 200 | 9 tiles / 20 cap | 0 Power (Water boost ×1.5) | Glacite (50), Cryo-Shale (35) | Foundational early drill. Mines the 3 base ores: **Glacite**, **Cryo-Shale**, and **Polar Quartz**. Incapable of penetrating hard volatile deposits. |
+| **Titan Drill** | 5×5 | **2** | 150 | 25 tiles / 40 cap | 2.2/sec (Water boost ×1.8) | Glacite (130), Cryo-Shale (90), Polar Quartz (60), Subzero Silicon (40) | Heavy industrial platform. Required to extract the 3 advanced ores: **Boreonite** (fuel), **Frost-Magnetite** (magnetic), and **Boreal Clathrate** (hydrate). |
+
+---
+
+### 3. Manufactured Industrial Materials
 | Material | Producing Facility | Recipe Ingredients | Applications |
 | :--- | :--- | :--- | :--- |
-| **Subzero Silicon** (`subzero-silicon`) | Cryo-Synthesizer | Polar Quartz (2), Cryo-Shale (1) → Yields ×2 | Distribution bridges, processor circuitry, turret guidance, unit blueprints. |
+| **Subzero Silicon** (`subzero-silicon`) | Cryo-Synthesizer | Polar Quartz (2), Cryo-Shale (1) → Yields ×2 | Distribution bridges, Titan Drills, processor circuitry, turret guidance, unit blueprints. |
 | **Cryo-Glass** (`cryo-glass`) | Cryo-Glass Kiln | Polar Quartz (2), Glacite (1) → Yields ×1 | Insulated liquid conduits, tanks, optical prisms, naval shipbuilding. |
 | **Cryo-Fiber** (`cryo-fiber`) | Fiber Extruder | Polar Quartz (2), Glacite (1) → Yields ×2 | High-tensile cables, processor assembler input, airframes, Frostbite flechette ammo. |
 | **Endothermic Salt** (`endothermic-salt`) | Endothermic Vat | Cryo-Shale (2), Boreonite (2) → Yields ×1 | Quantum Condenser input, Cryo Wall death nova explosive, Permafrost chemical freeze mortar shells. |
 | **Cryo-Crystal** (`cryo-crystal`) | Cryo-Crystallizer / Industrial Crystallizer | Polar Quartz + Boreonite + Chilled Water | Core ammunition for all heavy turrets, reactive Cryo Walls, Cryo-Alloy synthesis. |
 | **Gelid Polymer** (`gelid-polymer`) | Polymer Press | Boreal Clathrate (2), Cryo-Glass (1) → Yields ×1 | Cavitation Foundry input, Sleet walker armor, Icebreaker naval hull plating. |
 | **Cryo-Processor** (`cryo-processor`) | Processor Assembler | Subzero Silicon (3), Cryo-Fiber (2), Glacite (2) → Yields ×1 | Nanite Fabricator input, guided missile tracking (Avalanche), railgun targeting (Glacialis), unit computers. |
-| **Cryo-Alloy** (`cryo-alloy`) | Cryo-Alloy Foundry | Glacite (3), Subzero Silicon (2), Cryo-Crystal (2) + Chilled Water | Zero-Point Reactor fuel, Shielded Cryo Walls, Titan Drills, Reconstructors, Glacialis kinetic ammo. |
+| **Cryo-Alloy** (`cryo-alloy`) | Cryo-Alloy Foundry | Glacite (3), Subzero Silicon (2), Cryo-Crystal (2) + Chilled Water | Zero-Point Reactor fuel, Shielded Cryo Walls, Reconstructors, Glacialis kinetic ammo. |
 | **Superconducting Solenoid** (`superconducting-solenoid`) | Solenoid Winder | Cryo-Alloy (2), Frost-Magnetite (3), Subzero Silicon (1) → Yields ×1 | EMP guided torpedo ammo (Avalanche), walker servo limbs, railgun induction accelerators. |
-| **Aero-Glacite** (`aero-glacite`) | Cavitation Foundry | Glacite (3), Gelid Polymer (2) + Chilled Water → Yields ×1 | Hypersonic kinetic sabot ammo (Glacialis), strike aircraft airframes, Absolute Zero optics, Titan Drill. |
+| **Aero-Glacite** (`aero-glacite`) | Cavitation Foundry | Glacite (3), Gelid Polymer (2) + Chilled Water → Yields ×1 | Hypersonic kinetic sabot ammo (Glacialis), strike aircraft airframes, Absolute Zero optics. |
 | **Cryo-Nanites** (`cryo-nanites`) | Nanite Fabricator | Cryo-Processor (1), Cryo-Alloy (2), Cryo-Crystal (2) → Yields ×1 | Swarm ammo (Blizzard), cluster ammo (Permafrost), self-repairing armor & Shielded Walls. |
 | **Quantum Condensate** (`quantum-condensate`) | Quantum Condenser | Cryo-Crystal (4), Superconducting Solenoid (2), Endothermic Salt (3) + Chilled Water → Yields ×1 | Pinnacle freeze-implosion ammo (Glacialis: 2,400 dmg + 750 splash), Zero-Point Reactor quantum core. |
 
