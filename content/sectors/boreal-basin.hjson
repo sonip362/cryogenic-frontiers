@@ -3,5 +3,6 @@ sector: 0
 difficulty: 1
 captureWave: 25
 alwaysUnlocked: true
+research: core-frost
 allowLaunchLoadout: false
 allowLaunchSchematics: false

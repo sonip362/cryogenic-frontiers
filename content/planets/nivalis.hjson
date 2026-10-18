@@ -16,33 +16,11 @@ sectorSize: 1
 alwaysUnlocked: true
 clearSectorOnLose: true
 allowLaunchToNumbered: false
-allowWaveSimulation: false
 defaultCore: "core-frost"
 unlockedOnLand: [
   "core-frost"
 ]
-techTree: "core-frost"
 generator: SerpuloPlanetGenerator
-itemWhitelist: [
-  "glacite",
-  "cryo-shale",
-  "boreonite",
-  "polar-quartz",
-  "subzero-silicon",
-  "cryo-glass",
-  "gelid-polymer",
-  "cryo-fiber",
-  "endothermic-salt",
-  "cryo-processor",
-  "aero-glacite",
-  "superconducting-solenoid",
-  "cryo-crystal",
-  "cryo-alloy",
-  "frost-magnetite",
-  "boreal-clathrate",
-  "cryo-nanites",
-  "quantum-condensate"
-]
 mesh: [
   {
     type: NoiseMesh
