@@ -1,5 +1,5 @@
 type: Prop
 name: Cryo Boulder
 description: A frost-covered boulder fragment.
-variants: 0
+variants: 3
 solid: true

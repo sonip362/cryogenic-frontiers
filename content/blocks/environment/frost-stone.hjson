@@ -1,6 +1,6 @@
 type: Floor
 name: Frost Stone
 description: Dense permafrost bedrock underlying ancient glacial ice sheets.
-variants: 0
+variants: 3
 speedMultiplier: 1.0
 dragMultiplier: 1.0

@@ -1,6 +1,6 @@
 type: Floor
 name: Glacial Snow
 description: Deep, soft sub-zero snow crust. Impedes unit movement speed.
-variants: 0
+variants: 3
 speedMultiplier: 0.85
 dragMultiplier: 1.25

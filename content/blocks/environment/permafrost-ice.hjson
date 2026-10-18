@@ -1,6 +1,6 @@
 type: Floor
 name: Permafrost Ice
 description: Smooth, hard-packed crystalline ice. Increases unit velocity while reducing friction.
-variants: 0
+variants: 3
 speedMultiplier: 1.2
 dragMultiplier: 0.35
