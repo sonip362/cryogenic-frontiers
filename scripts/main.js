@@ -56,23 +56,11 @@ function getUnit(name) {
 }
 
 // ------------------------------------------------------------------------------
-// 3. Helper: Scatter Ore Vein
+// 3. Helper: Scatter Ore Vein (Suppressed: Zero Ore Generation)
 // ------------------------------------------------------------------------------
 function placeOreVein(cx, cy, radius, oreBlock, chance) {
-    if (oreBlock == null) return;
-    for (var dx = -radius; dx <= radius; dx++) {
-        for (var dy = -radius; dy <= radius; dy++) {
-            var distSq = dx * dx + dy * dy;
-            if (distSq <= radius * radius && Mathf.chance(chance || 0.75)) {
-                var tx = cx + dx;
-                var ty = cy + dy;
-                var tile = Vars.world.tile(tx, ty);
-                if (tile != null && tile.floor() != null && !tile.floor().isLiquid) {
-                    tile.setOverlay(oreBlock);
-                }
-            }
-        }
-    }
+    // Intentionally suppressed: All terrain generation set to produce zero ores
+    return;
 }
 
 function carveCorridor(x1, y1, x2, y2, radius, floorTile) {
@@ -153,6 +141,16 @@ function buildSectorTerrain(secNumber) {
 
     Log.info("[CryogenicFrontiers] Generating custom Nivalis terrain for sector " + secNumber + " (" + W + "x" + H + ")");
 
+    // Initial purge of all preexisting overlays / ores across the entire map
+    for (var clrX = 0; clrX < W; clrX++) {
+        for (var clrY = 0; clrY < H; clrY++) {
+            var cTileInit = Vars.world.tile(clrX, clrY);
+            if (cTileInit != null && cTileInit.overlay() != null && cTileInit.overlay() != Blocks.spawn) {
+                cTileInit.setOverlay(Blocks.air);
+            }
+        }
+    }
+
     // A. Base Floor & Wall Passes using low-frequency ridged noise
     var ridgeScale = 1.0 / 85.0;
     var biomeScale = 1.0 / 110.0;
@@ -167,6 +165,7 @@ function buildSectorTerrain(secNumber) {
             if (x < 6 || x >= W - 6 || y < 6 || y >= H - 6) {
                 tile.setFloor(frostStone);
                 tile.setBlock(frostStoneWall);
+                tile.setOverlay(Blocks.air);
                 continue;
             }
 
@@ -188,6 +187,7 @@ function buildSectorTerrain(secNumber) {
             if (nRiver > 0.88 && nCont < 0.2) {
                 tile.setFloor(Blocks.water);
                 tile.setBlock(Blocks.air);
+                tile.setOverlay(Blocks.air);
                 continue;
             } else if (nRiver > 0.82 && nCont < 0.15) {
                 tile.setFloor(Blocks.sandWater);
@@ -208,6 +208,9 @@ function buildSectorTerrain(secNumber) {
                     tile.setBlock(cryoBoulder);
                 }
             }
+
+            // Always strip any ore overlay on generated tiles
+            tile.setOverlay(Blocks.air);
         }
     }
 
@@ -533,10 +536,55 @@ function configureSectorWaves(totalWaves, threatLevel) {
 }
 
 // ------------------------------------------------------------------------------
-// 8. World Load & Sector Entry Hooks
+// 8. Planet Nivalis Custom Zero-Ore Generator Integration
+// Intercepts Mindustry's inbuilt generator so it produces clean terrain with NO ores
+// ------------------------------------------------------------------------------
+function setupNivalisGenerator() {
+    try {
+        var nivalis = Vars.content.planet("cryogenic-frontiers-nivalis") || Vars.content.planet("nivalis");
+        if (nivalis != null) {
+            var SerpuloPlanetGenerator = Packages.mindustry.maps.planet.SerpuloPlanetGenerator;
+            nivalis.generator = extend(SerpuloPlanetGenerator, {
+                postGenerate(tiles) {
+                    this.super$postGenerate(tiles);
+                    if (tiles != null) {
+                        for (var x = 0; x < tiles.width; x++) {
+                            for (var y = 0; y < tiles.height; y++) {
+                                var tile = tiles.getn(x, y);
+                                if (tile != null && tile.overlay() != null && tile.overlay() != Blocks.spawn) {
+                                    tile.setOverlay(Blocks.air);
+                                }
+                            }
+                        }
+                    }
+                },
+                generate() {
+                    this.super$generate();
+                    if (this.tiles != null) {
+                        for (var x = 0; x < this.tiles.width; x++) {
+                            for (var y = 0; y < this.tiles.height; y++) {
+                                var tile = this.tiles.getn(x, y);
+                                if (tile != null && tile.overlay() != null && tile.overlay() != Blocks.spawn) {
+                                    tile.setOverlay(Blocks.air);
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            Log.info("[CryogenicFrontiers] Nivalis zero-ore generator active.");
+        }
+    } catch (e) {
+        Log.err("[CryogenicFrontiers] Error setting up Nivalis generator: " + e);
+    }
+}
+
+// ------------------------------------------------------------------------------
+// 9. World Load & Sector Entry Hooks
 // ------------------------------------------------------------------------------
 Events.on(EventType.WorldLoadEvent, cons(function(e) {
     patchWaterAttributes();
+    setupNivalisGenerator();
 
     try {
         if (!Vars.state.isCampaign()) return;
@@ -547,6 +595,27 @@ Events.on(EventType.WorldLoadEvent, cons(function(e) {
         if (planetName.indexOf("nivalis") === -1) return;
 
         Log.info("[CryogenicFrontiers] Entered Nivalis campaign sector: " + sec.id);
+
+        // Strip any residual vanilla ores across the sector
+        var vanillaOres = [
+            Blocks.oreCopper, Blocks.oreLead, Blocks.oreCoal,
+            Blocks.oreTitanium, Blocks.oreThorium, Blocks.oreScrap
+        ];
+        var W = Vars.world.width();
+        var H = Vars.world.height();
+        for (var x = 0; x < W; x++) {
+            for (var y = 0; y < H; y++) {
+                var t = Vars.world.tile(x, y);
+                if (t != null && t.overlay() != null) {
+                    for (var oi = 0; oi < vanillaOres.length; oi++) {
+                        if (t.overlay() == vanillaOres[oi]) {
+                            t.setOverlay(Blocks.air);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
 
         // Check if sector requires initial generation
         // A sector is uninitialized if the default team has no active cores
@@ -565,9 +634,10 @@ Events.on(EventType.WorldLoadEvent, cons(function(e) {
     }
 }));
 
-// Re-apply shallow water patch on client load and verify environment atlas
+// Re-apply patches on client load and verify environment atlas
 Events.on(EventType.ClientLoadEvent, cons(function(e) {
     patchWaterAttributes();
+    setupNivalisGenerator();
     try {
         var grass = Core.atlas.find("grass1");
         var tiles = [
@@ -592,5 +662,7 @@ Events.on(EventType.ClientLoadEvent, cons(function(e) {
     }
 }));
 
-// Initial immediate patch execution
+// Initial immediate patch and generator execution
 patchWaterAttributes();
+setupNivalisGenerator();
+
