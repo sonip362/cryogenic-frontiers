@@ -76,7 +76,6 @@ ammoTypes: {
 requirements: [
   glacite/70
   cryo-shale/50
-  subzero-silicon/30
 ]
 category: turret
 research: core-frost
