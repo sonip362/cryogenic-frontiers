@@ -77,7 +77,6 @@ requirements: [
   glacite/70
   cryo-shale/50
   subzero-silicon/30
-  superconducting-solenoid/15
 ]
 category: turret
 research: core-frost
