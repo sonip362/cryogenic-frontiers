@@ -548,18 +548,11 @@ Events.on(EventType.WorldLoadEvent, cons(function(e) {
 
         Log.info("[CryogenicFrontiers] Entered Nivalis campaign sector: " + sec.id);
 
-        // Check if sector requires initial generation
-        // A sector is uninitialized if the default team has no active cores
-        var coreFrost = getBlock("core-frost") || Blocks.coreShard;
-        var hasPlayerCore = false;
-        var cores = Vars.state.rules.defaultTeam.cores();
-        if (cores != null && !cores.isEmpty()) {
-            hasPlayerCore = true;
-        }
-
-        if (!hasPlayerCore || Vars.state.wave <= 1) {
-            buildSectorTerrain(sec.id);
-        }
+        // Procedural terrain generation override disabled:
+        // Sector maps are now loaded directly from .msav files.
+        // if (!hasPlayerCore || Vars.state.wave <= 1) {
+        //     buildSectorTerrain(sec.id);
+        // }
     } catch (err) {
         Log.err("[CryogenicFrontiers] Error initializing Nivalis campaign world: " + err);
     }
