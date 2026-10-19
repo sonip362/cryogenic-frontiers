@@ -546,24 +546,15 @@ function setupNivalisGenerator() {
             var SerpuloPlanetGenerator = Packages.mindustry.maps.planet.SerpuloPlanetGenerator;
             nivalis.generator = extend(SerpuloPlanetGenerator, {
                 postGenerate(tiles) {
-                    this.super$postGenerate(tiles);
-                    if (tiles != null) {
-                        for (var x = 0; x < tiles.width; x++) {
-                            for (var y = 0; y < tiles.height; y++) {
-                                var tile = tiles.getn(x, y);
-                                if (tile != null && tile.overlay() != null && tile.overlay() != Blocks.spawn) {
-                                    tile.setOverlay(Blocks.air);
-                                }
-                            }
-                        }
-                    }
-                },
-                generate() {
-                    this.super$generate();
-                    if (this.tiles != null) {
-                        for (var x = 0; x < this.tiles.width; x++) {
-                            for (var y = 0; y < this.tiles.height; y++) {
-                                var tile = this.tiles.getn(x, y);
+                    try {
+                        this.super$postGenerate(tiles);
+                    } catch (e) {}
+
+                    var t = tiles || this.tiles || Vars.world.tiles;
+                    if (t != null) {
+                        for (var x = 0; x < t.width; x++) {
+                            for (var y = 0; y < t.height; y++) {
+                                var tile = t.getn(x, y);
                                 if (tile != null && tile.overlay() != null && tile.overlay() != Blocks.spawn) {
                                     tile.setOverlay(Blocks.air);
                                 }
