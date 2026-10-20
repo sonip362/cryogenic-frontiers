@@ -1,0 +1,31 @@
+type: MendProjector
+name: "Cryo Mender"
+description: "Periodically repairs surrounding structures within its radius with a sub-zero restorative pulse. Consumes electrical power. Can be boosted with Subzero Silicon."
+size: 1
+health: 160
+reload: 180
+range: 56
+healPercent: 6
+phaseBoost: 6
+phaseRangeBoost: 24
+baseColor: "6ecdec"
+phaseColor: "85f2ff"
+hasPower: true
+hasItems: true
+consumes: {
+  power: 0.35
+  items: {
+    items: [
+      subzero-silicon/1
+    ]
+    optional: true
+    booster: true
+  }
+}
+requirements: [
+  glacite/30
+  cryo-shale/30
+  subzero-silicon/20
+]
+category: effect
+research: core-frost

@@ -1,0 +1,32 @@
+type: MendProjector
+name: "Large Cryo Mender"
+description: "A heavy-duty cryogenic restorative projector. Emits wide-area structural mending waves to sustain defensive perimeters under intense bombardment. Consumes electrical power. Can be boosted with Cryo-Crystals."
+size: 2
+health: 520
+reload: 210
+range: 110
+healPercent: 14
+phaseBoost: 12
+phaseRangeBoost: 50
+baseColor: "6ecdec"
+phaseColor: "78f3e5"
+hasPower: true
+hasItems: true
+consumes: {
+  power: 1.5
+  items: {
+    items: [
+      cryo-crystal/1
+    ]
+    optional: true
+    booster: true
+  }
+}
+requirements: [
+  glacite/90
+  cryo-shale/80
+  subzero-silicon/50
+  cryo-crystal/35
+]
+category: effect
+research: cryo-mender

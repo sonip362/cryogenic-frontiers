@@ -157,6 +157,17 @@ The 6 natural ores are divided into two distinct extraction tiers, creating a me
   - High-tier bastion forged from **Cryo-Alloy** and infused with **Cryo-Nanites**.
   - Built-in **14 Armor** and **30% projectile deflection** chance with molecular self-repair matrix.
 
+### Restorative Projectors & Menders
+
+- **Cryo Mender** (1×1 Support Projector):
+  - Periodically emits a sub-zero restorative pulse repairing all surrounding damaged blocks within a **56-tile radius** (6% heal per wave).
+  - Consumes **0.35 power/sec**. Can be boosted with **Subzero Silicon** (+6% heal, +24 range).
+  - *Requirements*: Glacite (30), Cryo-Shale (30), Subzero Silicon (20).
+- **Large Cryo Mender** (2×2 Support Projector):
+  - Heavy-duty perimeter restoration projector covering a massive **110-tile radius** (14% heal per wave).
+  - Consumes **1.5 power/sec**. Can be boosted with **Cryo-Crystals** (+12% heal, +50 range).
+  - *Requirements*: Glacite (90), Cryo-Shale (80), Subzero Silicon (50), Cryo-Crystal (35).
+
 ---
 
 ## Logistics & Fluid Networks
