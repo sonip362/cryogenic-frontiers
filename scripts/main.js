@@ -601,8 +601,22 @@ Events.on(EventType.ClientLoadEvent, cons(function(e) {
     // Register core-frost default loadout so sector launches use Glacite/Shale/Quartz instead of Copper/Lead
     registerCoreFrostLoadout();
 
-    // Hook Map Editor UI to provide one-click Nivalis terrain conversion
+    // Hook Map Editor UI to provide one-click Nivalis terrain generation and conversion
     setupEditorNivalisButton();
+
+    // Auto-generate real 500x500 Quartz Valley map if still using old 150x250 placeholder
+    try {
+        var mod = Vars.mods.getMod("cryogenic-frontiers");
+        if (mod != null && mod.file != null) {
+            var qvFile = mod.file.child("maps").child("cryogenic-frontiers-nivalis").child("cryogenic-frontiers-quartz-valley.msav");
+            if (qvFile.exists() && qvFile.length() < 12000) {
+                Log.info("[CryogenicFrontiers] Upgrading placeholder Quartz Valley map to authentic 500x500 Nivalis Attack Map...");
+                generateQuartzValleyMap();
+            }
+        }
+    } catch (loadErr) {
+        Log.err("[CryogenicFrontiers] Error checking Quartz Valley map: " + loadErr);
+    }
 }));
 
 // ------------------------------------------------------------------------------
@@ -735,14 +749,21 @@ function setupEditorNivalisButton() {
                 if (Vars.ui.editor.find("nivalis-convert-btn") != null) return;
                 var buttons = Vars.ui.editor.buttons;
                 if (buttons != null) {
-                    var btn = buttons.button("❄ Nivalis", Icon.terrain, Styles.flatt, run(function() {
+                    var btn1 = buttons.button("❄ Gen Quartz Valley", Icon.terrain, Styles.flatt, run(function() {
+                        generateQuartzValleyMap();
+                        Vars.ui.showInfoToast("[accent]Quartz Valley 500x500 Attack Map generated and loaded![]", 4.0);
+                    })).size(190, 50).pad(4).get();
+                    btn1.name = "nivalis-gen-qv-btn";
+
+                    var btn2 = buttons.button("❄ Convert", Icon.refresh, Styles.flatt, run(function() {
                         if (Vars.world.tiles != null) {
                             transformTilesToNivalis(Vars.world.tiles, Vars.world.width(), Vars.world.height());
                             Vars.ui.showInfoToast("[accent]Map converted to Planet Nivalis environment![]", 3.0);
                         }
                     })).size(120, 50).pad(4).get();
-                    btn.name = "nivalis-convert-btn";
-                    Log.info("[CryogenicFrontiers] Registered Map Editor [❄ Nivalis] conversion button.");
+                    btn2.name = "nivalis-convert-btn";
+
+                    Log.info("[CryogenicFrontiers] Registered Map Editor [❄ Gen Quartz Valley] & [❄ Convert] buttons.");
                 }
             } catch (err) {
                 Log.err("[CryogenicFrontiers] Failed to add editor button: " + err);
@@ -753,7 +774,178 @@ function setupEditorNivalisButton() {
     }
 }
 
-// Global conversion utility for developer console or manual execution
+// ------------------------------------------------------------------------------
+// 11. Standalone Quartz Valley (Sector 12) Attack Map Generator
+// ------------------------------------------------------------------------------
+function generateQuartzValleyMap(customSeed) {
+    try {
+        var W = 500;
+        var H = 500;
+        var frostStone = getBlock("frost-stone") || Blocks.stone;
+        var permafrostIce = getBlock("permafrost-ice") || Blocks.ice;
+        var glacialSnow = getBlock("glacial-snow") || Blocks.snow;
+        var frostStoneWall = getBlock("frost-stone-wall") || Blocks.stoneWall;
+        var permafrostIceWall = getBlock("permafrost-ice-wall") || Blocks.iceWall;
+        var cryoBoulder = getBlock("cryo-boulder");
+
+        var oreGlacite = getBlock("ore-glacite");
+        var oreCryoShale = getBlock("ore-cryo-shale");
+        var oreBoreonite = getBlock("ore-boreonite");
+        var orePolarQuartz = getBlock("ore-polar-quartz");
+        var oreFrostMagnetite = getBlock("ore-frost-magnetite");
+        var oreBorealClathrate = getBlock("ore-boreal-clathrate");
+
+        var coreFrost = getBlock("core-frost") || Blocks.coreShard;
+        var coreGlacier = getBlock("core-glacier") || coreFrost;
+
+        var glaciteWallLarge = getBlock("glacite-wall-large") || Blocks.copperWallLarge;
+        var cryoWallLarge = getBlock("cryo-wall-large") || glaciteWallLarge;
+
+        var frostbite = getBlock("frostbite");
+        var permafrost = getBlock("permafrost");
+
+        // 1. Initialize canvas to 500x500
+        if (Vars.editor != null) {
+            Vars.editor.beginEdit(W, H);
+        } else {
+            Vars.world.resize(W, H);
+        }
+
+        // 2. Procedural terrain generation
+        var seed = customSeed || 74192;
+        var ridgeScale = 1.0 / 85.0;
+        var biomeScale = 1.0 / 110.0;
+        var elevScale = 1.0 / 140.0;
+
+        for (var x = 0; x < W; x++) {
+            for (var y = 0; y < H; y++) {
+                var tile = Vars.world.tile(x, y);
+                if (tile == null) continue;
+
+                if (x < 6 || x >= W - 6 || y < 6 || y >= H - 6) {
+                    tile.setFloor(frostStone);
+                    tile.setBlock(frostStoneWall);
+                    tile.setOverlay(Blocks.air);
+                    continue;
+                }
+
+                var nCont = Simplex.noise2d(seed, 3, 0.5, elevScale, x, y);
+                var nRidge = 1.0 - Math.abs(Simplex.noise2d(seed + 50, 4, 0.5, ridgeScale, x, y));
+                var nBiome = Simplex.noise2d(seed + 100, 3, 0.5, biomeScale, x, y);
+                var nRiver = 1.0 - Math.abs(Simplex.noise2d(seed + 200, 3, 0.5, 1.0 / 95.0, x, y));
+
+                if (nBiome > 0.25) {
+                    tile.setFloor(permafrostIce);
+                } else if (nBiome < -0.2) {
+                    tile.setFloor(glacialSnow);
+                } else {
+                    tile.setFloor(frostStone);
+                }
+
+                if (nRiver > 0.88 && nCont < 0.2) {
+                    tile.setFloor(Blocks.water);
+                    tile.setBlock(Blocks.air);
+                    tile.setOverlay(Blocks.air);
+                    continue;
+                } else if (nRiver > 0.82 && nCont < 0.15) {
+                    tile.setFloor(Blocks.sandWater);
+                }
+
+                if (nRidge > 0.68 && nCont > -0.25) {
+                    tile.setBlock(nBiome > 0.3 ? permafrostIceWall : frostStoneWall);
+                } else if (nCont > 0.55) {
+                    tile.setBlock(frostStoneWall);
+                } else {
+                    tile.setBlock(Blocks.air);
+                    if (cryoBoulder != null && nRidge > 0.55 && Mathf.chance(0.03)) {
+                        tile.setBlock(cryoBoulder);
+                    }
+                }
+                tile.setOverlay(Blocks.air);
+            }
+        }
+
+        smoothTerrain(frostStoneWall, permafrostIceWall, 2);
+
+        // 3. Player Base: South-West (x=50, y=50)
+        var pcX = 50, pcY = 50;
+        clearArea(pcX, pcY, 18, frostStone);
+        var pCoreTile = Vars.world.tile(pcX, pcY);
+        if (pCoreTile != null) {
+            pCoreTile.setBlock(coreFrost, Team.sharded, 0);
+        }
+
+        placeOreVein(pcX + 16, pcY + 6, 8, orePolarQuartz, 0.90);
+        placeOreVein(pcX + 6, pcY + 18, 8, oreBoreonite, 0.85);
+        placeOreVein(pcX - 12, pcY + 12, 7, oreGlacite, 0.85);
+        placeOreVein(pcX + 14, pcY - 14, 7, oreCryoShale, 0.85);
+        placeOreVein(pcX + 32, pcY + 32, 6, oreFrostMagnetite, 0.75);
+
+        // 4. Enemy Crux Stronghold: North-East (x=450, y=450)
+        var ecX = W - 50, ecY = H - 50;
+        clearArea(ecX, ecY, 22, permafrostIce);
+        var eCoreTile = Vars.world.tile(ecX, ecY);
+        if (eCoreTile != null) {
+            eCoreTile.setBlock(coreGlacier || coreFrost, Team.crux, 0);
+        }
+
+        var offsets = [-8, 8];
+        for (var i = 0; i < offsets.length; i++) {
+            var ox = offsets[i];
+            var tw1 = Vars.world.tile(ecX + ox, ecY); if (tw1 != null) tw1.setBlock(cryoWallLarge, Team.crux, 0);
+            var tw2 = Vars.world.tile(ecX, ecY + ox); if (tw2 != null) tw2.setBlock(cryoWallLarge, Team.crux, 0);
+        }
+        var t1 = Vars.world.tile(ecX + 10, ecY + 10); if (t1 != null && frostbite != null) t1.setBlock(frostbite, Team.crux, 0);
+        var t2 = Vars.world.tile(ecX - 10, ecY + 10); if (t2 != null && permafrost != null) t2.setBlock(permafrost, Team.crux, 0);
+        var t3 = Vars.world.tile(ecX, ecY - 10); if (t3 != null && permafrost != null) t3.setBlock(permafrost, Team.crux, 0);
+
+        placeOreVein(ecX - 16, ecY - 6, 7, oreGlacite, 0.80);
+        placeOreVein(ecX + 14, ecY - 12, 7, oreCryoShale, 0.80);
+        placeOreVein(ecX - 10, ecY - 16, 6, orePolarQuartz, 0.80);
+
+        // 5. Connecting Navigable Canyons
+        carveCorridor(pcX, pcY, Math.floor(W / 2), Math.floor(H / 2), 10, permafrostIce);
+        carveCorridor(Math.floor(W / 2), Math.floor(H / 2), ecX, ecY, 10, permafrostIce);
+        carveCorridor(pcX, pcY, W - 60, 60, 8, frostStone);
+        carveCorridor(W - 60, 60, ecX, ecY, 8, frostStone);
+        carveCorridor(pcX, pcY, 60, H - 60, 8, glacialSnow);
+        carveCorridor(60, H - 60, ecX, ecY, 8, glacialSnow);
+
+        // 6. Wild Ore Veins
+        var wildOres = [orePolarQuartz, oreBoreonite, oreGlacite, oreCryoShale, oreFrostMagnetite, oreBorealClathrate];
+        for (var i = 0; i < 40; i++) {
+            var wo = wildOres[i % wildOres.length];
+            if (wo == null) continue;
+            var rx = 80 + Math.floor(Math.random() * (W - 160));
+            var ry = 80 + Math.floor(Math.random() * (H - 160));
+            placeOreVein(rx, ry, 5 + Math.floor(Math.random() * 4), wo, 0.80);
+        }
+
+        // 7. Write to .msav file
+        var mod = Vars.mods.getMod("cryogenic-frontiers");
+        if (mod != null && mod.file != null && Vars.editor != null) {
+            var targetFile = mod.file.child("maps").child("cryogenic-frontiers-nivalis").child("cryogenic-frontiers-quartz-valley.msav");
+            
+            Vars.editor.tags.put("name", "Quartz Valley");
+            Vars.editor.tags.put("author", "sonip362");
+            Vars.editor.tags.put("description", "A deep, energy-starved glacial chasm. Establish high-output Thermo-Stirling power grids using rich Boreonite deposits, deploy Cryo Freezers, and eliminate the Crux outpost.");
+            Vars.editor.tags.put("width", "" + W);
+            Vars.editor.tags.put("height", "" + H);
+            Vars.editor.tags.put("rules", "{\"attackMode\":true,\"winWave\":0,\"planet\":\"cryogenic-frontiers-nivalis\"}");
+
+            var map = Vars.editor.createMap(targetFile);
+            Packages.mindustry.io.MapIO.writeMap(targetFile, map);
+            Log.info("[CryogenicFrontiers] Successfully generated and wrote Quartz Valley map to: " + targetFile.path());
+        }
+
+        return true;
+    } catch (err) {
+        Log.err("[CryogenicFrontiers] Failed to generate Quartz Valley map: " + err);
+        return false;
+    }
+}
+
+// Global utilities for developer console or manual execution
 if (typeof global !== "undefined") {
     global.convertNivalis = function() {
         var tiles = Vars.world.tiles;
@@ -764,11 +956,14 @@ if (typeof global !== "undefined") {
         transformTilesToNivalis(tiles, Vars.world.width(), Vars.world.height());
         Log.info("[CryogenicFrontiers] Converted active map tiles to Nivalis cryogenic blocks!");
     };
+
+    global.generateQuartzValley = generateQuartzValleyMap;
 }
 
 // Initial immediate patch execution
 patchWaterAttributes();
 registerCoreFrostLoadout();
+
 
 
 
