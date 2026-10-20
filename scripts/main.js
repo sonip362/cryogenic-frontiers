@@ -539,6 +539,20 @@ Events.on(EventType.WorldLoadEvent, cons(function(e) {
     patchWaterAttributes();
 
     try {
+        // Map Editor generation hook:
+        // Automatically converts terrain when generated for Planet Nivalis inside the editor
+        if (Vars.state.isEditor()) {
+            var planet = Vars.state.rules.planet;
+            var sec = Vars.state.rules.sector;
+            var isNivalis = (planet != null && ("" + planet.name).indexOf("nivalis") !== -1) ||
+                            (sec != null && sec.planet != null && ("" + sec.planet.name).indexOf("nivalis") !== -1);
+            if (isNivalis && Vars.world.tiles != null) {
+                Log.info("[CryogenicFrontiers] Map Editor generated Nivalis sector. Converting terrain to Nivalis cryogenic blocks...");
+                transformTilesToNivalis(Vars.world.tiles, Vars.world.width(), Vars.world.height());
+            }
+            return;
+        }
+
         if (!Vars.state.isCampaign()) return;
         var sec = Vars.state.getSector();
         if (sec == null || sec.planet == null) return;
@@ -587,8 +601,8 @@ Events.on(EventType.ClientLoadEvent, cons(function(e) {
     // Register core-frost default loadout so sector launches use Glacite/Shale/Quartz instead of Copper/Lead
     registerCoreFrostLoadout();
 
-    // Assign custom Nivalis generator for editor and procedural map generation
-    setupNivalisGenerator();
+    // Hook Map Editor UI to provide one-click Nivalis terrain conversion
+    setupEditorNivalisButton();
 }));
 
 // ------------------------------------------------------------------------------
@@ -631,10 +645,8 @@ function registerCoreFrostLoadout() {
 }
 
 // ------------------------------------------------------------------------------
-// 10. Planet Nivalis Generator for In-Game Map Editor & Campaign
+// 10. Planet Nivalis Terrain Transformers & Map Editor Integration
 // ------------------------------------------------------------------------------
-var SerpuloPlanetGenerator = Packages.mindustry.maps.planet.SerpuloPlanetGenerator;
-
 function transformTilesToNivalis(tiles, width, height) {
     if (tiles == null) return;
     var frostStone = getBlock("frost-stone") || Blocks.stone;
@@ -715,141 +727,29 @@ function transformTilesToNivalis(tiles, width, height) {
     }
 }
 
-function generateStandaloneNivalis(tiles, width, height, seed) {
-    if (tiles == null) return;
-    var frostStone = getBlock("frost-stone") || Blocks.stone;
-    var permafrostIce = getBlock("permafrost-ice") || Blocks.ice;
-    var glacialSnow = getBlock("glacial-snow") || Blocks.snow;
-    var frostStoneWall = getBlock("frost-stone-wall") || Blocks.stoneWall;
-    var permafrostIceWall = getBlock("permafrost-ice-wall") || Blocks.iceWall;
-    var cryoBoulder = getBlock("cryo-boulder");
-
-    var oreGlacite = getBlock("ore-glacite");
-    var oreCryoShale = getBlock("ore-cryo-shale");
-    var oreBoreonite = getBlock("ore-boreonite");
-    var orePolarQuartz = getBlock("ore-polar-quartz");
-    var oreFrostMagnetite = getBlock("ore-frost-magnetite");
-
-    var ridgeScale = 1.0 / 85.0;
-    var biomeScale = 1.0 / 110.0;
-    var elevScale = 1.0 / 140.0;
-
-    for (var x = 0; x < width; x++) {
-        for (var y = 0; y < height; y++) {
-            var tile = tiles.get(x, y);
-            if (tile == null) continue;
-
-            if (x < 6 || x >= width - 6 || y < 6 || y >= height - 6) {
-                tile.setFloor(frostStone);
-                tile.setBlock(frostStoneWall);
-                continue;
-            }
-
-            var nCont = Simplex.noise2d(seed, 3, 0.5, elevScale, x, y);
-            var nRidge = 1.0 - Math.abs(Simplex.noise2d(seed + 50, 4, 0.5, ridgeScale, x, y));
-            var nBiome = Simplex.noise2d(seed + 100, 3, 0.5, biomeScale, x, y);
-            var nRiver = 1.0 - Math.abs(Simplex.noise2d(seed + 200, 3, 0.5, 1.0 / 95.0, x, y));
-
-            if (nBiome > 0.25) {
-                tile.setFloor(permafrostIce);
-            } else if (nBiome < -0.2) {
-                tile.setFloor(glacialSnow);
-            } else {
-                tile.setFloor(frostStone);
-            }
-
-            if (nRiver > 0.88 && nCont < 0.2) {
-                tile.setFloor(Blocks.water);
-                tile.setBlock(Blocks.air);
-                continue;
-            } else if (nRiver > 0.82 && nCont < 0.15) {
-                tile.setFloor(Blocks.sandWater);
-            }
-
-            if (nRidge > 0.68 && nCont > -0.25) {
-                if (nBiome > 0.3) {
-                    tile.setBlock(permafrostIceWall);
-                } else {
-                    tile.setBlock(frostStoneWall);
-                }
-            } else if (nCont > 0.55) {
-                tile.setBlock(frostStoneWall);
-            } else {
-                tile.setBlock(Blocks.air);
-                if (cryoBoulder != null && nRidge > 0.55 && Mathf.chance(0.03)) {
-                    tile.setBlock(cryoBoulder);
-                }
-            }
-        }
-    }
-
-    // Ore scattering across map
-    var oreCount = Math.floor((width * height) / 3600);
-    var ores = [oreGlacite, oreCryoShale, oreBoreonite, orePolarQuartz, oreFrostMagnetite];
-    for (var i = 0; i < oreCount; i++) {
-        var ore = ores[i % ores.length];
-        if (ore == null) continue;
-        var ox = 20 + Math.floor(Math.random() * (width - 40));
-        var oy = 20 + Math.floor(Math.random() * (height - 40));
-        var radius = 4 + Math.floor(Math.random() * 5);
-        for (var dx = -radius; dx <= radius; dx++) {
-            for (var dy = -radius; dy <= radius; dy++) {
-                if (dx * dx + dy * dy <= radius * radius && Math.random() < 0.75) {
-                    var t = tiles.get(ox + dx, oy + dy);
-                    if (t != null && t.floor() != null && !t.floor().isLiquid && t.block() === Blocks.air) {
-                        t.setOverlay(ore);
-                    }
-                }
-            }
-        }
-    }
-}
-
-function createNivalisGenerator() {
+function setupEditorNivalisButton() {
     try {
-        var gen = extend(SerpuloPlanetGenerator, {
-            generate: function() {
-                var generated = false;
-                try {
-                    this.super$generate();
-                    generated = true;
-                } catch (err) {
-                    Log.warn("[CryogenicFrontiers] Base SerpuloPlanetGenerator failed: " + err);
+        if (Vars.ui == null || Vars.ui.editor == null) return;
+        Vars.ui.editor.shown(run(function() {
+            try {
+                if (Vars.ui.editor.find("nivalis-convert-btn") != null) return;
+                var buttons = Vars.ui.editor.buttons;
+                if (buttons != null) {
+                    var btn = buttons.button("❄ Nivalis", Icon.terrain, Styles.flatt, run(function() {
+                        if (Vars.world.tiles != null) {
+                            transformTilesToNivalis(Vars.world.tiles, Vars.world.width(), Vars.world.height());
+                            Vars.ui.showInfoToast("[accent]Map converted to Planet Nivalis environment![]", 3.0);
+                        }
+                    })).size(120, 50).pad(4).get();
+                    btn.name = "nivalis-convert-btn";
+                    Log.info("[CryogenicFrontiers] Registered Map Editor [❄ Nivalis] conversion button.");
                 }
-
-                var tiles = this.tiles || Vars.world.tiles;
-                var w = this.width || (tiles ? tiles.width : Vars.world.width());
-                var h = this.height || (tiles ? tiles.height : Vars.world.height());
-                var s = this.seed || Math.floor(Math.random() * 100000);
-
-                if (tiles != null) {
-                    if (generated) {
-                        transformTilesToNivalis(tiles, w, h);
-                    } else {
-                        generateStandaloneNivalis(tiles, w, h, s);
-                    }
-                }
+            } catch (err) {
+                Log.err("[CryogenicFrontiers] Failed to add editor button: " + err);
             }
-        });
-        return gen;
+        }));
     } catch (ex) {
-        Log.err("[CryogenicFrontiers] Failed to extend SerpuloPlanetGenerator: " + ex);
-        return null;
-    }
-}
-
-function setupNivalisGenerator() {
-    try {
-        var nivalis = Vars.content.planet("cryogenic-frontiers-nivalis") || Vars.content.planet("nivalis");
-        if (nivalis != null) {
-            var gen = createNivalisGenerator();
-            if (gen != null) {
-                nivalis.generator = gen;
-                Log.info("[CryogenicFrontiers] NivalisPlanetGenerator successfully assigned to Planet Nivalis.");
-            }
-        }
-    } catch (err) {
-        Log.err("[CryogenicFrontiers] Error setting Nivalis generator: " + err);
+        Log.err("[CryogenicFrontiers] Error registering editor shown hook: " + ex);
     }
 }
 
@@ -869,6 +769,6 @@ if (typeof global !== "undefined") {
 // Initial immediate patch execution
 patchWaterAttributes();
 registerCoreFrostLoadout();
-setupNivalisGenerator();
+
 
 
