@@ -583,7 +583,51 @@ Events.on(EventType.ClientLoadEvent, cons(function(e) {
     } catch (ex) {
         Log.err("[CryogenicFrontiers] Texture verify error: " + ex);
     }
+
+    // Register core-frost default loadout so sector launches use Glacite/Shale/Quartz instead of Copper/Lead
+    registerCoreFrostLoadout();
 }));
+
+// ------------------------------------------------------------------------------
+// 9. Core Loadout Registration for Sector Launching
+// ------------------------------------------------------------------------------
+function registerCoreFrostLoadout() {
+    try {
+        var coreFrost = getBlock("core-frost");
+        if (coreFrost == null) return;
+
+        var Stile = Packages.mindustry.game.Schematic.Stile;
+        var Schematic = Packages.mindustry.game.Schematic;
+
+        var tiles = new Packages.arc.struct.Seq();
+        tiles.add(new Stile(coreFrost, 0, 0, null, 0));
+        var tags = new Packages.arc.struct.StringMap();
+        tags.put("name", "Core: Frost");
+        var schem = new Schematic(tiles, tags, 3, 3);
+
+        // Add to loadouts cache
+        var loadoutsSeq = Vars.schematics.getLoadouts().get(coreFrost);
+        if (loadoutsSeq == null) {
+            loadoutsSeq = new Packages.arc.struct.Seq();
+            Vars.schematics.getLoadouts().put(coreFrost, loadoutsSeq);
+        }
+        if (!loadoutsSeq.contains(schem)) {
+            loadoutsSeq.add(schem);
+        }
+
+        // Set as default loadout via reflection so getDefaultLoadout(coreFrost) returns schem
+        var f = Vars.schematics.getClass().getDeclaredField("defaultLoadouts");
+        f.setAccessible(true);
+        var map = f.get(Vars.schematics);
+        map.put(coreFrost, schem);
+
+        Log.info("[CryogenicFrontiers] Registered default launch loadout for Core: Frost.");
+    } catch (err) {
+        Log.err("[CryogenicFrontiers] Failed to register core loadout: " + err);
+    }
+}
 
 // Initial immediate patch execution
 patchWaterAttributes();
+registerCoreFrostLoadout();
+
