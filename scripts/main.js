@@ -746,27 +746,35 @@ function setupEditorNivalisButton() {
         if (Vars.ui == null || Vars.ui.editor == null) return;
         Vars.ui.editor.shown(run(function() {
             try {
-                if (Vars.ui.editor.find("nivalis-convert-btn") != null) return;
-                var buttons = Vars.ui.editor.buttons;
-                if (buttons != null) {
-                    var btn1 = buttons.button("❄ Gen Quartz Valley", Icon.terrain, Styles.flatt, run(function() {
-                        generateQuartzValleyMap();
-                        Vars.ui.showInfoToast("[accent]Quartz Valley 500x500 Attack Map generated and loaded![]", 4.0);
-                    })).size(190, 50).pad(4).get();
-                    btn1.name = "nivalis-gen-qv-btn";
+                // Hook the top-left Menu dialog so buttons appear prominently inside Menu
+                var f = Vars.ui.editor.getClass().getDeclaredField("menu");
+                f.setAccessible(true);
+                var menuDialog = f.get(Vars.ui.editor);
+                if (menuDialog != null && menuDialog.cont != null) {
+                    if (menuDialog.cont.find("nivalis-menu-btn") == null) {
+                        menuDialog.cont.row();
+                        var btn1 = menuDialog.cont.button("❄ Gen Nivalis Quartz Valley", Icon.terrain, Styles.flatt, run(function() {
+                            menuDialog.hide();
+                            generateQuartzValleyMap();
+                            Vars.ui.showInfoToast("[accent]Quartz Valley 500x500 Attack Map generated![]", 4.0);
+                        })).size(370, 60).pad(5).get();
+                        btn1.name = "nivalis-menu-btn";
 
-                    var btn2 = buttons.button("❄ Convert", Icon.refresh, Styles.flatt, run(function() {
-                        if (Vars.world.tiles != null) {
-                            transformTilesToNivalis(Vars.world.tiles, Vars.world.width(), Vars.world.height());
-                            Vars.ui.showInfoToast("[accent]Map converted to Planet Nivalis environment![]", 3.0);
-                        }
-                    })).size(120, 50).pad(4).get();
-                    btn2.name = "nivalis-convert-btn";
+                        menuDialog.cont.row();
+                        var btn2 = menuDialog.cont.button("❄ Convert Canvas to Nivalis", Icon.refresh, Styles.flatt, run(function() {
+                            menuDialog.hide();
+                            if (Vars.world.tiles != null) {
+                                transformTilesToNivalis(Vars.world.tiles, Vars.world.width(), Vars.world.height());
+                                Vars.ui.showInfoToast("[accent]Canvas converted to Nivalis environment![]", 3.0);
+                            }
+                        })).size(370, 60).pad(5).get();
+                        btn2.name = "nivalis-convert-menu-btn";
 
-                    Log.info("[CryogenicFrontiers] Registered Map Editor [❄ Gen Quartz Valley] & [❄ Convert] buttons.");
+                        Log.info("[CryogenicFrontiers] Registered Map Editor Menu [❄ Gen Nivalis Quartz Valley] & [❄ Convert] buttons.");
+                    }
                 }
             } catch (err) {
-                Log.err("[CryogenicFrontiers] Failed to add editor button: " + err);
+                Log.err("[CryogenicFrontiers] Failed to hook editor menu: " + err);
             }
         }));
     } catch (ex) {
