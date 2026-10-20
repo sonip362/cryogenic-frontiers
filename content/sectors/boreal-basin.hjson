@@ -1,7 +1,7 @@
 planet: nivalis
 sector: 0
 difficulty: 1
-captureWave: 25
+captureWave: 15
 alwaysUnlocked: true
 research: core-frost
 allowLaunchLoadout: false
