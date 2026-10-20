@@ -586,6 +586,9 @@ Events.on(EventType.ClientLoadEvent, cons(function(e) {
 
     // Register core-frost default loadout so sector launches use Glacite/Shale/Quartz instead of Copper/Lead
     registerCoreFrostLoadout();
+
+    // Assign custom Nivalis generator for editor and procedural map generation
+    setupNivalisGenerator();
 }));
 
 // ------------------------------------------------------------------------------
@@ -627,7 +630,245 @@ function registerCoreFrostLoadout() {
     }
 }
 
+// ------------------------------------------------------------------------------
+// 10. Planet Nivalis Generator for In-Game Map Editor & Campaign
+// ------------------------------------------------------------------------------
+var SerpuloPlanetGenerator = Packages.mindustry.maps.planet.SerpuloPlanetGenerator;
+
+function transformTilesToNivalis(tiles, width, height) {
+    if (tiles == null) return;
+    var frostStone = getBlock("frost-stone") || Blocks.stone;
+    var permafrostIce = getBlock("permafrost-ice") || Blocks.ice;
+    var glacialSnow = getBlock("glacial-snow") || Blocks.snow;
+    var frostStoneWall = getBlock("frost-stone-wall") || Blocks.stoneWall;
+    var permafrostIceWall = getBlock("permafrost-ice-wall") || Blocks.iceWall;
+    var cryoBoulder = getBlock("cryo-boulder");
+
+    var oreGlacite = getBlock("ore-glacite");
+    var oreCryoShale = getBlock("ore-cryo-shale");
+    var oreBoreonite = getBlock("ore-boreonite");
+    var orePolarQuartz = getBlock("ore-polar-quartz");
+    var oreFrostMagnetite = getBlock("ore-frost-magnetite");
+    var oreBorealClathrate = getBlock("ore-boreal-clathrate");
+
+    for (var x = 0; x < width; x++) {
+        for (var y = 0; y < height; y++) {
+            var tile = tiles.get(x, y);
+            if (tile == null) continue;
+
+            // Floor conversion
+            var f = tile.floor();
+            if (f != null) {
+                if (f === Blocks.stone || f === Blocks.darksand || f === Blocks.basalt ||
+                    f === Blocks.hotrock || f === Blocks.magmarock || f === Blocks.charcoal ||
+                    f === Blocks.craters || f === Blocks.dacite || f === Blocks.charr) {
+                    tile.setFloor(frostStone);
+                } else if (f === Blocks.sand || f === Blocks.moss || f === Blocks.sporeMoss ||
+                           f === Blocks.snow || f === Blocks.iceSnow || f === Blocks.darksandTaintedWater) {
+                    tile.setFloor(glacialSnow);
+                } else if (f === Blocks.ice || f === Blocks.salt) {
+                    tile.setFloor(permafrostIce);
+                } else if (f === Blocks.deepwater || f === Blocks.deepTaintedWater ||
+                           f === Blocks.taintedWater || f === Blocks.water) {
+                    tile.setFloor(Blocks.water);
+                } else if (f === Blocks.sandWater) {
+                    tile.setFloor(Blocks.sandWater);
+                }
+            }
+
+            // Block / Wall conversion
+            var b = tile.block();
+            if (b != null && b !== Blocks.air) {
+                if (b === Blocks.stoneWall || b === Blocks.sandWall || b === Blocks.darksandWall ||
+                    b === Blocks.basaltWall || b === Blocks.sporeWall || b === Blocks.daciteWall) {
+                    tile.setBlock(frostStoneWall);
+                } else if (b === Blocks.iceWall || b === Blocks.snowWall) {
+                    tile.setBlock(permafrostIceWall);
+                } else if (b === Blocks.boulder || b === Blocks.rock || b === Blocks.sandBoulder ||
+                           b === Blocks.basaltBoulder || b === Blocks.snowrock || b === Blocks.sporeCluster) {
+                    if (cryoBoulder != null) {
+                        tile.setBlock(cryoBoulder);
+                    } else {
+                        tile.setBlock(frostStoneWall);
+                    }
+                }
+            }
+
+            // Ore overlay conversion
+            var o = tile.overlay();
+            if (o != null && o !== Blocks.air) {
+                if (o === Blocks.oreCopper) {
+                    tile.setOverlay(oreGlacite || Blocks.air);
+                } else if (o === Blocks.oreLead) {
+                    tile.setOverlay(oreCryoShale || Blocks.air);
+                } else if (o === Blocks.oreCoal) {
+                    tile.setOverlay(oreBoreonite || Blocks.air);
+                } else if (o === Blocks.oreTitanium) {
+                    tile.setOverlay(orePolarQuartz || Blocks.air);
+                } else if (o === Blocks.oreThorium) {
+                    tile.setOverlay(oreFrostMagnetite || Blocks.air);
+                } else if (o === Blocks.oreScrap) {
+                    tile.setOverlay(oreBorealClathrate || Blocks.air);
+                }
+            }
+        }
+    }
+}
+
+function generateStandaloneNivalis(tiles, width, height, seed) {
+    if (tiles == null) return;
+    var frostStone = getBlock("frost-stone") || Blocks.stone;
+    var permafrostIce = getBlock("permafrost-ice") || Blocks.ice;
+    var glacialSnow = getBlock("glacial-snow") || Blocks.snow;
+    var frostStoneWall = getBlock("frost-stone-wall") || Blocks.stoneWall;
+    var permafrostIceWall = getBlock("permafrost-ice-wall") || Blocks.iceWall;
+    var cryoBoulder = getBlock("cryo-boulder");
+
+    var oreGlacite = getBlock("ore-glacite");
+    var oreCryoShale = getBlock("ore-cryo-shale");
+    var oreBoreonite = getBlock("ore-boreonite");
+    var orePolarQuartz = getBlock("ore-polar-quartz");
+    var oreFrostMagnetite = getBlock("ore-frost-magnetite");
+
+    var ridgeScale = 1.0 / 85.0;
+    var biomeScale = 1.0 / 110.0;
+    var elevScale = 1.0 / 140.0;
+
+    for (var x = 0; x < width; x++) {
+        for (var y = 0; y < height; y++) {
+            var tile = tiles.get(x, y);
+            if (tile == null) continue;
+
+            if (x < 6 || x >= width - 6 || y < 6 || y >= height - 6) {
+                tile.setFloor(frostStone);
+                tile.setBlock(frostStoneWall);
+                continue;
+            }
+
+            var nCont = Simplex.noise2d(seed, 3, 0.5, elevScale, x, y);
+            var nRidge = 1.0 - Math.abs(Simplex.noise2d(seed + 50, 4, 0.5, ridgeScale, x, y));
+            var nBiome = Simplex.noise2d(seed + 100, 3, 0.5, biomeScale, x, y);
+            var nRiver = 1.0 - Math.abs(Simplex.noise2d(seed + 200, 3, 0.5, 1.0 / 95.0, x, y));
+
+            if (nBiome > 0.25) {
+                tile.setFloor(permafrostIce);
+            } else if (nBiome < -0.2) {
+                tile.setFloor(glacialSnow);
+            } else {
+                tile.setFloor(frostStone);
+            }
+
+            if (nRiver > 0.88 && nCont < 0.2) {
+                tile.setFloor(Blocks.water);
+                tile.setBlock(Blocks.air);
+                continue;
+            } else if (nRiver > 0.82 && nCont < 0.15) {
+                tile.setFloor(Blocks.sandWater);
+            }
+
+            if (nRidge > 0.68 && nCont > -0.25) {
+                if (nBiome > 0.3) {
+                    tile.setBlock(permafrostIceWall);
+                } else {
+                    tile.setBlock(frostStoneWall);
+                }
+            } else if (nCont > 0.55) {
+                tile.setBlock(frostStoneWall);
+            } else {
+                tile.setBlock(Blocks.air);
+                if (cryoBoulder != null && nRidge > 0.55 && Mathf.chance(0.03)) {
+                    tile.setBlock(cryoBoulder);
+                }
+            }
+        }
+    }
+
+    // Ore scattering across map
+    var oreCount = Math.floor((width * height) / 3600);
+    var ores = [oreGlacite, oreCryoShale, oreBoreonite, orePolarQuartz, oreFrostMagnetite];
+    for (var i = 0; i < oreCount; i++) {
+        var ore = ores[i % ores.length];
+        if (ore == null) continue;
+        var ox = 20 + Math.floor(Math.random() * (width - 40));
+        var oy = 20 + Math.floor(Math.random() * (height - 40));
+        var radius = 4 + Math.floor(Math.random() * 5);
+        for (var dx = -radius; dx <= radius; dx++) {
+            for (var dy = -radius; dy <= radius; dy++) {
+                if (dx * dx + dy * dy <= radius * radius && Math.random() < 0.75) {
+                    var t = tiles.get(ox + dx, oy + dy);
+                    if (t != null && t.floor() != null && !t.floor().isLiquid && t.block() === Blocks.air) {
+                        t.setOverlay(ore);
+                    }
+                }
+            }
+        }
+    }
+}
+
+function createNivalisGenerator() {
+    try {
+        var gen = extend(SerpuloPlanetGenerator, {
+            generate: function() {
+                var generated = false;
+                try {
+                    this.super$generate();
+                    generated = true;
+                } catch (err) {
+                    Log.warn("[CryogenicFrontiers] Base SerpuloPlanetGenerator failed: " + err);
+                }
+
+                var tiles = this.tiles || Vars.world.tiles;
+                var w = this.width || (tiles ? tiles.width : Vars.world.width());
+                var h = this.height || (tiles ? tiles.height : Vars.world.height());
+                var s = this.seed || Math.floor(Math.random() * 100000);
+
+                if (tiles != null) {
+                    if (generated) {
+                        transformTilesToNivalis(tiles, w, h);
+                    } else {
+                        generateStandaloneNivalis(tiles, w, h, s);
+                    }
+                }
+            }
+        });
+        return gen;
+    } catch (ex) {
+        Log.err("[CryogenicFrontiers] Failed to extend SerpuloPlanetGenerator: " + ex);
+        return null;
+    }
+}
+
+function setupNivalisGenerator() {
+    try {
+        var nivalis = Vars.content.planet("cryogenic-frontiers-nivalis") || Vars.content.planet("nivalis");
+        if (nivalis != null) {
+            var gen = createNivalisGenerator();
+            if (gen != null) {
+                nivalis.generator = gen;
+                Log.info("[CryogenicFrontiers] NivalisPlanetGenerator successfully assigned to Planet Nivalis.");
+            }
+        }
+    } catch (err) {
+        Log.err("[CryogenicFrontiers] Error setting Nivalis generator: " + err);
+    }
+}
+
+// Global conversion utility for developer console or manual execution
+if (typeof global !== "undefined") {
+    global.convertNivalis = function() {
+        var tiles = Vars.world.tiles;
+        if (tiles == null) {
+            Log.info("[CryogenicFrontiers] No active world tiles to convert.");
+            return;
+        }
+        transformTilesToNivalis(tiles, Vars.world.width(), Vars.world.height());
+        Log.info("[CryogenicFrontiers] Converted active map tiles to Nivalis cryogenic blocks!");
+    };
+}
+
 // Initial immediate patch execution
 patchWaterAttributes();
 registerCoreFrostLoadout();
+setupNivalisGenerator();
+
 
