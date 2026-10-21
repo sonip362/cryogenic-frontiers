@@ -1,0 +1,26 @@
+type: MassDriver
+name: "Cryo Mass Driver"
+description: "A precision cryogenic electromagnetic mass accelerator. Collects a dozen items into an insulated sub-zero payload canister and launches it across mountainous terrain and frozen chasms to a linked receiver."
+size: 2
+itemCapacity: 12
+minDistribute: 12
+range: 360
+reload: 80
+rotateSpeed: 4.5
+translation: 6.0
+knockback: 3.5
+bulletSpeed: 5.5
+bulletLifetime: 180
+shake: 2.0
+hasPower: true
+consumes: {
+  power: 1.75
+}
+requirements: [
+  glacite/85
+  cryo-shale/60
+  subzero-silicon/45
+  frost-magnetite/25
+]
+category: distribution
+research: cryo-bridge
