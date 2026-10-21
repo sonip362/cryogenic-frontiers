@@ -87,6 +87,28 @@ function registerCoreFrostLoadout() {
 // ------------------------------------------------------------------------------
 Events.on(EventType.WorldLoadEvent, cons(function(e) {
     patchWaterAttributes();
+
+    try {
+        if (Vars.state.isCampaign()) {
+            var sec = Vars.state.getSector();
+            if (sec != null && sec.preset != null) {
+                var presetName = "" + sec.preset.name;
+                if (presetName.indexOf("quartz-valley") !== -1) {
+                    Vars.state.rules.attackMode = true;
+                    Vars.state.rules.winWave = 0;
+                    var cruxTeam = Packages.mindustry.game.Team.crux;
+                    if (cruxTeam != null && cruxTeam.cores() != null && !cruxTeam.cores().isEmpty()) {
+                        if (sec.info != null) {
+                            sec.info.wasCaptured = false;
+                        }
+                    }
+                    Log.info("[CryogenicFrontiers] Enforced Quartz Valley Attack Mode (winWave=0, enemy core present).");
+                }
+            }
+        }
+    } catch (err) {
+        Log.err("[CryogenicFrontiers] Error enforcing attack mode for Quartz Valley: " + err);
+    }
 }));
 
 // ------------------------------------------------------------------------------
