@@ -21,7 +21,7 @@ Features:
 - Fortifications: Glacite Walls, Cryo Nova Walls, Shielded Superconducting Walls
 - Custom Campaign Planet: Nivalis (4 Progressive Sectors with custom environmental blocks, 4+ min prep timers, and climax 2-Core Attack Map)
 '''
-version: "3.2.0"
+version: "3.3.0"
 minGameVersion: "136"
 hasScripts: true
 hidden: false
