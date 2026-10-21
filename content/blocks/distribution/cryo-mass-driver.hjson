@@ -20,7 +20,7 @@ requirements: [
   glacite/85
   cryo-shale/60
   subzero-silicon/45
-  frost-magnetite/25
+ 
 ]
 category: distribution
 research: cryo-bridge
