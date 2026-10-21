@@ -5,6 +5,7 @@ size: 1
 health: 120
 range: 5
 liquidCapacity: 30.0
+hasPower: false
 requirements: [
   cryo-glass/8
   glacite/6

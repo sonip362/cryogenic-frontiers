@@ -1,0 +1,32 @@
+name: "Amphibious Retrofitter"
+description: "An amphibious refit gantry designed for coastal logistics. Dismantles Tier 1 naval combat cutters (Icebreaker) and reconstructs them into Tier 1 armored assault walkers (Sleet) using mid-game alloys and polymers."
+type: Reconstructor
+size: 3
+health: 680
+constructTime: 720
+floating: true
+placeableLiquid: true
+hasPower: true
+consumes: {
+  power: 3.5
+  items: [
+    subzero-silicon/30
+    gelid-polymer/25
+    cryo-alloy/15
+  ]
+}
+upgrades: [
+  [
+    icebreaker
+    sleet
+  ]
+]
+requirements: [
+  glacite/130
+  subzero-silicon/80
+  gelid-polymer/60
+  cryo-alloy/35
+  cryo-glass/40
+]
+category: units
+research: cryo-naval-factory
