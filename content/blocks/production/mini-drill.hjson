@@ -1,0 +1,33 @@
+type: Drill
+name: "Mini Drill"
+description: "A compact, lightweight 2x2 mechanical drill forged purely from Glacite. Optimized specifically for surface extraction of Glacite deposits. Incapable of piercing through dense shale, quartz, or harder mineral veins."
+size: 2
+tier: 1
+drillTime: 280
+hardnessDrillMultiplier: 0
+liquidBoostIntensity: 1.4
+warmupSpeed: 0.02
+rotateSpeed: 3.0
+drawMineItem: true
+hasPower: false
+hasLiquids: true
+consumes: {
+  liquid: {
+    liquid: chilled-water
+    amount: 0.05
+    optional: true
+    booster: true
+  }
+}
+blockedItems: [
+  cryo-shale
+  polar-quartz
+  boreonite
+  frost-magnetite
+  boreal-clathrate
+]
+requirements: [
+  glacite/18
+]
+category: production
+research: core-frost
