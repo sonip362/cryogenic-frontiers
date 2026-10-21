@@ -30,4 +30,4 @@ requirements: [
   cryo-fiber/25
 ]
 category: units
-research: cryo-unit-factory
+research: cryo-processor-factory
