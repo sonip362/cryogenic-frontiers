@@ -444,16 +444,16 @@ function updateCruxRebuilder() {
         rule.infiniteResources = true;
     }
 
-    // Check if there are broken blocks in Crux base territory (x > 115)
-    var hasCruxPlans = false;
+    // Find the nearest broken Crux plan within base territory (x > 125)
+    var targetPlan = null;
     try {
         var teamData = cruxTeam.data();
         if (teamData != null && teamData.plans != null && !teamData.plans.isEmpty()) {
             var planSeq = teamData.plans;
             for (var p = 0; p < planSeq.size; p++) {
                 var candidate = planSeq.get(p);
-                if (candidate != null && candidate.x > 115) {
-                    hasCruxPlans = true;
+                if (candidate != null && candidate.x > 125) {
+                    targetPlan = candidate;
                     break;
                 }
             }
@@ -467,19 +467,42 @@ function updateCruxRebuilder() {
             var typeName = "" + u.type.name;
             if (typeName.indexOf("frost-beta") !== -1) {
                 builderCount++;
-                // Behavioral control for EVERY Frost Beta unit:
-                if (hasCruxPlans) {
-                    // Broken blocks exist in Crux base -> activate BuilderAI to reconstruct them
-                    if (!(u.controller() instanceof Packages.mindustry.ai.types.BuilderAI)) {
-                        u.controller(new Packages.mindustry.ai.types.BuilderAI());
+                var uVel = (typeof u.vel === "function" ? u.vel() : u.vel);
+                var uSpeed = (typeof u.speed === "function" ? u.speed() : (u.type != null ? u.type.speed : 1.5));
+
+                // 1. Force disarm: NEVER allow the repair bot to shoot weapons
+                if (u.mounts != null) {
+                    for (var m = 0; m < u.mounts.length; m++) {
+                        u.mounts[m].shoot = false;
+                        u.mounts[m].rotate = false;
+                    }
+                }
+
+                if (targetPlan != null) {
+                    // Broken block exists in Crux territory -> navigate strictly to it
+                    var tx = targetPlan.x * 8;
+                    var ty = targetPlan.y * 8;
+                    var pdx = tx - u.x;
+                    var pdy = ty - u.y;
+                    var pdist = Math.sqrt(pdx * pdx + pdy * pdy);
+
+                    if (pdist > 45) {
+                        // Fly directly toward the blueprint with NoAI so it cannot pathfind to player core!
+                        if (!(u.controller() instanceof Packages.mindustry.ai.types.NoAI)) {
+                            u.controller(new Packages.mindustry.ai.types.NoAI());
+                        }
+                        if (uVel != null) uVel.set(pdx, pdy).limit(uSpeed);
+                    } else {
+                        // Close enough to blueprint -> activate BuilderAI to reconstruct it
+                        if (!(u.controller() instanceof Packages.mindustry.ai.types.BuilderAI)) {
+                            u.controller(new Packages.mindustry.ai.types.BuilderAI());
+                        }
                     }
                 } else {
                     // No broken blocks exist -> park at Crux Core with NoAI so it NEVER attacks the player!
                     if (!(u.controller() instanceof Packages.mindustry.ai.types.NoAI)) {
                         u.controller(new Packages.mindustry.ai.types.NoAI());
                     }
-                    var uVel = (typeof u.vel === "function" ? u.vel() : u.vel);
-                    var uSpeed = (typeof u.speed === "function" ? u.speed() : (u.type != null ? u.type.speed : 1.5));
                     var cdx = core.x - u.x;
                     var cdy = core.y - u.y;
                     var cdist = Math.sqrt(cdx * cdx + cdy * cdy);
@@ -494,7 +517,6 @@ function updateCruxRebuilder() {
                 if (u.x < 125 * 8) {
                     u.x = core.x;
                     u.y = core.y;
-                    var uVel = (typeof u.vel === "function" ? u.vel() : u.vel);
                     if (uVel != null) uVel.set(0, 0);
                     u.controller(new Packages.mindustry.ai.types.NoAI());
                 }
@@ -556,5 +578,36 @@ Events.run(Packages.mindustry.game.EventType.Trigger.update, run(function() {
         updateSubzeroStagedMovement();
     } catch(err3) {
         // Safe catch for per-frame steering
+    }
+
+    // 4. Per-frame weapon disarm & hard boundary tether for Crux repair bot
+    try {
+        var cruxTeam = Packages.mindustry.game.Team.crux;
+        if (cruxTeam != null && cruxTeam.core() != null) {
+            var cruxCore = cruxTeam.core();
+            Groups.unit.each(cons(function(u) {
+                if (u != null && !u.dead && u.team == cruxTeam && u.type != null) {
+                    var typeName = "" + u.type.name;
+                    if (typeName.indexOf("frost-beta") !== -1) {
+                        // Keep weapons disarmed
+                        if (u.mounts != null) {
+                            for (var m = 0; m < u.mounts.length; m++) {
+                                u.mounts[m].shoot = false;
+                            }
+                        }
+                        // Instant clamp to Crux core if ever crossing boundary
+                        if (u.x < 125 * 8) {
+                            u.x = cruxCore.x;
+                            u.y = cruxCore.y;
+                            var uVel = (typeof u.vel === "function" ? u.vel() : u.vel);
+                            if (uVel != null) uVel.set(0, 0);
+                            u.controller(new Packages.mindustry.ai.types.NoAI());
+                        }
+                    }
+                }
+            }));
+        }
+    } catch(err4) {
+        // Safe catch
     }
 }));
