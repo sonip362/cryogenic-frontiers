@@ -251,23 +251,27 @@ function updateSubzeroStagedMovement() {
             var targetX = airStagingX + offsetX;
             var targetY = airStagingY + offsetY;
 
+            var uVel = (typeof u.vel === "function" ? u.vel() : u.vel);
+            var uSpeed = (typeof u.speed === "function" ? u.speed() : (u.type != null ? u.type.speed : 1.5));
             var dx = targetX - u.x;
             var dy = targetY - u.y;
             var distSq = dx * dx + dy * dy;
             if (distSq > (24 * 24)) {
-                u.vel().set(dx, dy).limit(u.speed() * 0.75);
+                if (uVel != null) uVel.set(dx, dy).limit(uSpeed * 0.75);
             } else {
-                u.vel().scl(0.8);
+                if (uVel != null) uVel.scl(0.8);
             }
         } else if (typeName.indexOf("icebreaker") !== -1) {
             // Naval units loiter safely in their water channel near where they spawned
+            var uVel = (typeof u.vel === "function" ? u.vel() : u.vel);
+            var uSpeed = (typeof u.speed === "function" ? u.speed() : (u.type != null ? u.type.speed : 1.5));
             var ndx = stageInfo.spawnX - u.x;
             var ndy = stageInfo.spawnY - u.y;
             var ndistSq = ndx * ndx + ndy * ndy;
             if (ndistSq > (20 * 20)) {
-                u.vel().set(ndx, ndy).limit(u.speed() * 0.5);
+                if (uVel != null) uVel.set(ndx, ndy).limit(uSpeed * 0.5);
             } else {
-                u.vel().scl(0.8);
+                if (uVel != null) uVel.scl(0.8);
             }
         }
     }));
@@ -435,13 +439,15 @@ function updateCruxRebuilder() {
                     if (!(u.controller() instanceof Packages.mindustry.ai.types.NoAI)) {
                         u.controller(new Packages.mindustry.ai.types.NoAI());
                     }
+                    var uVel = (typeof u.vel === "function" ? u.vel() : u.vel);
+                    var uSpeed = (typeof u.speed === "function" ? u.speed() : (u.type != null ? u.type.speed : 1.5));
                     var cdx = core.x - u.x;
                     var cdy = core.y - u.y;
                     var cdist = Math.sqrt(cdx * cdx + cdy * cdy);
                     if (cdist > 40) {
-                        u.vel().set(cdx, cdy).limit(u.speed());
+                        if (uVel != null) uVel.set(cdx, cdy).limit(uSpeed);
                     } else {
-                        u.vel().scl(0.8);
+                        if (uVel != null) uVel.scl(0.8);
                     }
                 }
 
@@ -449,7 +455,8 @@ function updateCruxRebuilder() {
                 if (u.x < 125 * 8) {
                     u.x = core.x;
                     u.y = core.y;
-                    u.vel().set(0, 0);
+                    var uVel = (typeof u.vel === "function" ? u.vel() : u.vel);
+                    if (uVel != null) uVel.set(0, 0);
                     u.controller(new Packages.mindustry.ai.types.NoAI());
                 }
             }
