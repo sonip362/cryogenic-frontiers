@@ -435,9 +435,6 @@ function updateCruxRebuilder() {
                     if (!(u.controller() instanceof Packages.mindustry.ai.types.NoAI)) {
                         u.controller(new Packages.mindustry.ai.types.NoAI());
                     }
-                    if (u.controller() != null) {
-                        u.controller().target = null;
-                    }
                     var cdx = core.x - u.x;
                     var cdy = core.y - u.y;
                     var cdist = Math.sqrt(cdx * cdx + cdy * cdy);
