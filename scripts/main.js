@@ -234,15 +234,20 @@ function updateSubzeroStagedMovement() {
 
     Groups.unit.each(cons(function(u) {
         if (u == null || u.dead || u.team != cruxTeam || u.type == null) return;
-        var uid = "" + u.id();
+        var typeName = "" + u.type.name;
+
+        // Never touch or steer repair bots here
+        if (typeName.indexOf("frost-beta") !== -1) return;
+
+        var uNum = (typeof u.id === "function" ? u.id() : u.id);
+        var uid = "" + uNum;
         var stageInfo = stagedUnitIds[uid];
         if (!stageInfo) return;
 
-        var typeName = "" + u.type.name;
         if (typeName.indexOf("boreas") !== -1) {
             // Air squadron formation offset
-            var offsetX = ((u.id() % 5) - 2) * 18;
-            var offsetY = (((u.id() >> 2) % 5) - 2) * 18;
+            var offsetX = ((uNum % 5) - 2) * 18;
+            var offsetY = (((uNum >> 2) % 5) - 2) * 18;
             var targetX = airStagingX + offsetX;
             var targetY = airStagingY + offsetY;
 
@@ -290,7 +295,8 @@ function updateSubzeroSquadrons() {
         var isIcebreaker = typeName.indexOf("icebreaker") !== -1;
         if (!isBoreas && !isIcebreaker) return;
 
-        var uid = "" + u.id();
+        var uNum = (typeof u.id === "function" ? u.id() : u.id);
+        var uid = "" + uNum;
 
         // If unit already launched in an assault, let native combat AI lead it
         if (assaultingUnitIds[uid]) {
@@ -341,7 +347,8 @@ function updateSubzeroSquadrons() {
         if (currentStagedBoreas.length >= threshold || elapsedBoreas > 150 || boreasUnderAttack) {
             for (var b = 0; b < currentStagedBoreas.length; b++) {
                 var ub = currentStagedBoreas[b];
-                var ubId = "" + ub.id();
+                var ubNum = (typeof ub.id === "function" ? ub.id() : ub.id);
+                var ubId = "" + ubNum;
                 assaultingUnitIds[ubId] = true;
                 delete stagedUnitIds[ubId];
                 ub.controller(ub.type.createController());
@@ -363,7 +370,8 @@ function updateSubzeroSquadrons() {
         if (currentStagedIcebreaker.length >= threshold || elapsedIce > 150 || icebreakerUnderAttack) {
             for (var i = 0; i < currentStagedIcebreaker.length; i++) {
                 var ui = currentStagedIcebreaker[i];
-                var uiId = "" + ui.id();
+                var uiNum = (typeof ui.id === "function" ? ui.id() : ui.id);
+                var uiId = "" + uiNum;
                 assaultingUnitIds[uiId] = true;
                 delete stagedUnitIds[uiId];
                 ui.controller(ui.type.createController());
@@ -409,19 +417,50 @@ function updateCruxRebuilder() {
         }
     } catch(err) {}
 
-    // Find active Crux Frost Beta builder drone
-    var activeBuilder = null;
+    // Find and control ALL active Crux Frost Beta builder drones
+    var builderCount = 0;
     Groups.unit.each(cons(function(u) {
         if (u != null && !u.dead && u.team == cruxTeam && u.type != null) {
             var typeName = "" + u.type.name;
             if (typeName.indexOf("frost-beta") !== -1) {
-                activeBuilder = u;
+                builderCount++;
+                // Behavioral control for EVERY Frost Beta unit:
+                if (hasCruxPlans) {
+                    // Broken blocks exist in Crux base -> activate BuilderAI to reconstruct them
+                    if (!(u.controller() instanceof Packages.mindustry.ai.types.BuilderAI)) {
+                        u.controller(new Packages.mindustry.ai.types.BuilderAI());
+                    }
+                } else {
+                    // No broken blocks exist -> park at Crux Core with NoAI so it NEVER attacks the player!
+                    if (!(u.controller() instanceof Packages.mindustry.ai.types.NoAI)) {
+                        u.controller(new Packages.mindustry.ai.types.NoAI());
+                    }
+                    if (u.controller() != null) {
+                        u.controller().target = null;
+                    }
+                    var cdx = core.x - u.x;
+                    var cdy = core.y - u.y;
+                    var cdist = Math.sqrt(cdx * cdx + cdy * cdy);
+                    if (cdist > 40) {
+                        u.vel().set(cdx, cdy).limit(u.speed());
+                    } else {
+                        u.vel().scl(0.8);
+                    }
+                }
+
+                // Hard boundary tether: If the builder bot ever wanders to x < 125 tiles, immediately leash it back
+                if (u.x < 125 * 8) {
+                    u.x = core.x;
+                    u.y = core.y;
+                    u.vel().set(0, 0);
+                    u.controller(new Packages.mindustry.ai.types.NoAI());
+                }
             }
         }
     }));
 
-    // If drone does not exist, spawn replacement at Crux core
-    if (activeBuilder == null) {
+    // If no drone exists, spawn replacement at Crux core
+    if (builderCount === 0) {
         if (builderRespawnTimer > 0) {
             builderRespawnTimer--;
             return;
@@ -429,10 +468,10 @@ function updateCruxRebuilder() {
         try {
             var unitType = Vars.content.unit("cryogenic-frontiers-frost-beta");
             if (unitType != null) {
-                activeBuilder = unitType.spawn(cruxTeam, core.x, core.y);
-                if (activeBuilder != null) {
-                    activeBuilder.add();
-                    activeBuilder.controller(new Packages.mindustry.ai.types.NoAI());
+                var spawned = unitType.spawn(cruxTeam, core.x, core.y);
+                if (spawned != null) {
+                    spawned.add();
+                    spawned.controller(new Packages.mindustry.ai.types.NoAI());
                     builderRespawnTimer = 35 * 60; // 35 seconds cooldown if destroyed
                     Log.info("[CryogenicFrontiers] Deployed Crux Frost Beta base reconstruction bot.");
                 }
@@ -441,64 +480,38 @@ function updateCruxRebuilder() {
             Log.err("[CryogenicFrontiers] Error spawning Crux builder bot: " + err);
         }
     }
-
-    if (activeBuilder != null) {
-        // Behavioral control:
-        if (hasCruxPlans) {
-            // Broken blocks exist in Crux base -> activate BuilderAI to reconstruct them
-            if (!(activeBuilder.controller() instanceof Packages.mindustry.ai.types.BuilderAI)) {
-                activeBuilder.controller(new Packages.mindustry.ai.types.BuilderAI());
-            }
-        } else {
-            // No broken blocks exist -> park at Crux Core with NoAI so it NEVER attacks the player!
-            if (!(activeBuilder.controller() instanceof Packages.mindustry.ai.types.NoAI)) {
-                activeBuilder.controller(new Packages.mindustry.ai.types.NoAI());
-            }
-            if (activeBuilder.controller() != null) {
-                activeBuilder.controller().target = null;
-            }
-            var cdx = core.x - activeBuilder.x;
-            var cdy = core.y - activeBuilder.y;
-            var cdist = Math.sqrt(cdx * cdx + cdy * cdy);
-            if (cdist > 40) {
-                activeBuilder.vel().set(cdx, cdy).limit(activeBuilder.speed());
-            } else {
-                activeBuilder.vel().scl(0.8);
-            }
-        }
-
-        // Hard boundary tether: If the builder bot ever wanders to x < 125 tiles, immediately leash it back
-        if (activeBuilder.x < 125 * 8) {
-            activeBuilder.x = core.x;
-            activeBuilder.y = core.y;
-            activeBuilder.vel().set(0, 0);
-            activeBuilder.controller(new Packages.mindustry.ai.types.NoAI());
-        }
-    }
 }
 
 // ------------------------------------------------------------------------------
 // 7. World Tick Update Hook
 // ------------------------------------------------------------------------------
 Events.run(Packages.mindustry.game.EventType.Trigger.update, run(function() {
-    try {
-        if (Vars.state != null && Vars.state.isPlaying() && subzeroCombatActive) {
-            subzeroCombatTimer++;
+    if (Vars.state == null || !Vars.state.isPlaying() || !subzeroCombatActive) return;
 
-            // Every frame: guide staged units into position
-            updateSubzeroStagedMovement();
+    subzeroCombatTimer++;
 
-            // Every 30 ticks (0.5s): squadron coordination and launch check
-            if (subzeroCombatTimer % 30 === 0) {
-                updateSubzeroSquadrons();
-            }
-
-            // Every 30 ticks staggered: Crux auto-repair bot check
-            if (subzeroCombatTimer % 30 === 15) {
-                updateCruxRebuilder();
-            }
+    // 1. Crux auto-repair bot check (every 30 ticks, independently protected)
+    if (subzeroCombatTimer % 30 === 0) {
+        try {
+            updateCruxRebuilder();
+        } catch(err1) {
+            Log.err("[CryogenicFrontiers] Error in crux rebuilder: " + err1);
         }
-    } catch(err) {
-        Log.err("[CryogenicFrontiers] Error in subzero combat update: " + err);
+    }
+
+    // 2. Squadron coordination and launch check (every 30 ticks, independently protected)
+    if (subzeroCombatTimer % 30 === 15) {
+        try {
+            updateSubzeroSquadrons();
+        } catch(err2) {
+            Log.err("[CryogenicFrontiers] Error in squad check: " + err2);
+        }
+    }
+
+    // 3. Staged unit movement (every frame, independently protected)
+    try {
+        updateSubzeroStagedMovement();
+    } catch(err3) {
+        // Safe catch for per-frame steering
     }
 }));
