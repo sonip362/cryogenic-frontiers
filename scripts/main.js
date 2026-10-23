@@ -112,23 +112,23 @@ Events.on(EventType.WorldLoadEvent, cons(function(e) {
                             sec.info.wasCaptured = false;
                         }
                     }
-                    initSubzeroRebuilder();
-                    Log.info("[CryogenicFrontiers] Initialized Subzero Crags Attack Mode & Auto-Rebuilder.");
+                    initSubzeroCombat();
+                    Log.info("[CryogenicFrontiers] Initialized Subzero Crags Attack Mode & Combat AI.");
                 } else {
-                    subzeroRebuilderActive = false;
+                    subzeroCombatActive = false;
                 }
             } else {
-                subzeroRebuilderActive = false;
+                subzeroCombatActive = false;
             }
         } else {
             // Also enable in custom game or editor playtest if map name contains subzero crags
             if (Vars.state.map != null && Vars.state.map.name() != null) {
                 var mapName = ("" + Vars.state.map.name()).toLowerCase();
                 if (mapName.indexOf("subzero crags") !== -1) {
-                    initSubzeroRebuilder();
-                    Log.info("[CryogenicFrontiers] Initialized Subzero Crags Auto-Rebuilder for Custom Map.");
+                    initSubzeroCombat();
+                    Log.info("[CryogenicFrontiers] Initialized Subzero Crags Combat AI for Custom Map.");
                 } else {
-                    subzeroRebuilderActive = false;
+                    subzeroCombatActive = false;
                 }
             }
         }
@@ -174,15 +174,26 @@ patchWaterAttributes();
 registerCoreFrostLoadout();
 
 // ==============================================================================
-// 6. Subzero Crags Crux Auto-Repair Bot System
+// 6. Subzero Crags Crux Combat AI: Base Auto-Repair & Squadron Staging System
 // ==============================================================================
 
-var subzeroRebuilderActive = false;
+var subzeroCombatActive = false;
+var subzeroCombatTimer = 0;
 var builderRespawnTimer = 0;
+var stagedUnitIds = {};
+var assaultingUnitIds = {};
+var lastStagedTimeBoreas = 0;
+var lastStagedTimeIcebreaker = 0;
 
-function initSubzeroRebuilder() {
-    subzeroRebuilderActive = true;
+function initSubzeroCombat() {
+    subzeroCombatActive = true;
+    subzeroCombatTimer = 0;
     builderRespawnTimer = 0;
+    stagedUnitIds = {};
+    assaultingUnitIds = {};
+    lastStagedTimeBoreas = 0;
+    lastStagedTimeIcebreaker = 0;
+
     try {
         var cruxTeam = Packages.mindustry.game.Team.crux;
         var rule = Vars.state.rules.teams.get(cruxTeam);
@@ -196,6 +207,178 @@ function initSubzeroRebuilder() {
     }
 }
 
+// Dynamic squad threshold: starts at 2 units in early game, scales up over time
+function getSquadThreshold() {
+    var minutes = subzeroCombatTimer / (60 * 60);
+    if (minutes < 5) {
+        return 2; // 0-5 min: 2 units at a time
+    } else if (minutes < 10) {
+        return 3; // 5-10 min: 3 units
+    } else if (minutes < 16) {
+        return 4; // 10-16 min: 4 units
+    } else if (minutes < 24) {
+        return 5; // 16-24 min: 5 units
+    } else {
+        return 6; // 24+ min: 6 units
+    }
+}
+
+// Steers waiting units into position while holding in staging
+function updateSubzeroStagedMovement() {
+    var cruxTeam = Packages.mindustry.game.Team.crux;
+    if (cruxTeam == null) return;
+
+    // Rally waypoint outside Crux factory: Tile (170, 106)
+    var airStagingX = 170 * 8;
+    var airStagingY = 106 * 8;
+
+    Groups.unit.each(cons(function(u) {
+        if (u == null || u.dead || u.team != cruxTeam || u.type == null) return;
+        var uid = "" + u.id();
+        var stageInfo = stagedUnitIds[uid];
+        if (!stageInfo) return;
+
+        var typeName = "" + u.type.name;
+        if (typeName.indexOf("boreas") !== -1) {
+            // Air squadron formation offset
+            var offsetX = ((u.id() % 5) - 2) * 18;
+            var offsetY = (((u.id() >> 2) % 5) - 2) * 18;
+            var targetX = airStagingX + offsetX;
+            var targetY = airStagingY + offsetY;
+
+            var dx = targetX - u.x;
+            var dy = targetY - u.y;
+            var distSq = dx * dx + dy * dy;
+            if (distSq > (24 * 24)) {
+                u.vel().set(dx, dy).limit(u.speed() * 0.75);
+            } else {
+                u.vel().scl(0.8);
+            }
+        } else if (typeName.indexOf("icebreaker") !== -1) {
+            // Naval units loiter safely in their water channel near where they spawned
+            var ndx = stageInfo.spawnX - u.x;
+            var ndy = stageInfo.spawnY - u.y;
+            var ndistSq = ndx * ndx + ndy * ndy;
+            if (ndistSq > (20 * 20)) {
+                u.vel().set(ndx, ndy).limit(u.speed() * 0.5);
+            } else {
+                u.vel().scl(0.8);
+            }
+        }
+    }));
+}
+
+// Scans units, enforces waiting with NoAI, and launches assault when squad size reached
+function updateSubzeroSquadrons() {
+    var cruxTeam = Packages.mindustry.game.Team.crux;
+    if (cruxTeam == null || cruxTeam.cores() == null || cruxTeam.cores().isEmpty()) return;
+
+    var currentStagedBoreas = [];
+    var currentStagedIcebreaker = [];
+    var boreasUnderAttack = false;
+    var icebreakerUnderAttack = false;
+    var threshold = getSquadThreshold();
+
+    Groups.unit.each(cons(function(u) {
+        if (u == null || u.dead || u.team != cruxTeam || u.type == null) return;
+        var typeName = "" + u.type.name;
+
+        // Base builder drone is managed separately
+        if (typeName.indexOf("frost-beta") !== -1) return;
+
+        var isBoreas = typeName.indexOf("boreas") !== -1;
+        var isIcebreaker = typeName.indexOf("icebreaker") !== -1;
+        if (!isBoreas && !isIcebreaker) return;
+
+        var uid = "" + u.id();
+
+        // If unit already launched in an assault, let native combat AI lead it
+        if (assaultingUnitIds[uid]) {
+            return;
+        }
+
+        // If unit wanders past Crux home territory (x < 115 tiles), release immediately into assault
+        if (u.x < 115 * 8) {
+            assaultingUnitIds[uid] = true;
+            delete stagedUnitIds[uid];
+            u.controller(u.type.createController());
+            return;
+        }
+
+        // Register in staged registry
+        if (!stagedUnitIds[uid]) {
+            stagedUnitIds[uid] = {
+                spawnX: u.x,
+                spawnY: u.y
+            };
+        }
+
+        // Put into NoAI so it stands and waits for partners instead of solo rushing
+        if (!(u.controller() instanceof Packages.mindustry.ai.types.NoAI)) {
+            u.controller(new Packages.mindustry.ai.types.NoAI());
+        }
+
+        // If player attacks waiting units, trigger immediate retaliatory assault
+        if (u.health < u.maxHealth * 0.95) {
+            if (isBoreas) boreasUnderAttack = true;
+            if (isIcebreaker) icebreakerUnderAttack = true;
+        }
+
+        if (isBoreas) {
+            currentStagedBoreas.push(u);
+        } else if (isIcebreaker) {
+            currentStagedIcebreaker.push(u);
+        }
+    }));
+
+    // Boreas Squadron Launch
+    if (currentStagedBoreas.length > 0) {
+        if (lastStagedTimeBoreas === 0) {
+            lastStagedTimeBoreas = subzeroCombatTimer;
+        }
+        var elapsedBoreas = (subzeroCombatTimer - lastStagedTimeBoreas) / 60;
+        // Launch if squad reaches threshold, or timeout (> 150s), or under player attack
+        if (currentStagedBoreas.length >= threshold || elapsedBoreas > 150 || boreasUnderAttack) {
+            for (var b = 0; b < currentStagedBoreas.length; b++) {
+                var ub = currentStagedBoreas[b];
+                var ubId = "" + ub.id();
+                assaultingUnitIds[ubId] = true;
+                delete stagedUnitIds[ubId];
+                ub.controller(ub.type.createController());
+            }
+            lastStagedTimeBoreas = 0;
+            Log.info("[CryogenicFrontiers] Crux launched Boreas air squadron (" + currentStagedBoreas.length + " units, Threshold: " + threshold + ").");
+        }
+    } else {
+        lastStagedTimeBoreas = 0;
+    }
+
+    // Icebreaker Fleet Launch
+    if (currentStagedIcebreaker.length > 0) {
+        if (lastStagedTimeIcebreaker === 0) {
+            lastStagedTimeIcebreaker = subzeroCombatTimer;
+        }
+        var elapsedIce = (subzeroCombatTimer - lastStagedTimeIcebreaker) / 60;
+        // Launch if fleet reaches threshold, or timeout (> 150s), or under player attack
+        if (currentStagedIcebreaker.length >= threshold || elapsedIce > 150 || icebreakerUnderAttack) {
+            for (var i = 0; i < currentStagedIcebreaker.length; i++) {
+                var ui = currentStagedIcebreaker[i];
+                var uiId = "" + ui.id();
+                assaultingUnitIds[uiId] = true;
+                delete stagedUnitIds[uiId];
+                ui.controller(ui.type.createController());
+            }
+            lastStagedTimeIcebreaker = 0;
+            Log.info("[CryogenicFrontiers] Crux launched Icebreaker naval fleet (" + currentStagedIcebreaker.length + " units, Threshold: " + threshold + ").");
+        }
+    } else {
+        lastStagedTimeIcebreaker = 0;
+    }
+}
+
+// ------------------------------------------------------------------------------
+// Crux Base Auto-Repair Bot (Frost Beta)
+// ------------------------------------------------------------------------------
 function updateCruxRebuilder() {
     var cruxTeam = Packages.mindustry.game.Team.crux;
     if (cruxTeam == null || cruxTeam.cores() == null || cruxTeam.cores().isEmpty()) return;
@@ -297,17 +480,25 @@ function updateCruxRebuilder() {
 // ------------------------------------------------------------------------------
 // 7. World Tick Update Hook
 // ------------------------------------------------------------------------------
-var rebuilderTickCounter = 0;
 Events.run(Packages.mindustry.game.EventType.Trigger.update, run(function() {
     try {
-        if (Vars.state != null && Vars.state.isPlaying() && subzeroRebuilderActive) {
-            rebuilderTickCounter++;
-            // Check & update rebuilder bot every 30 ticks (0.5s)
-            if (rebuilderTickCounter % 30 === 0) {
+        if (Vars.state != null && Vars.state.isPlaying() && subzeroCombatActive) {
+            subzeroCombatTimer++;
+
+            // Every frame: guide staged units into position
+            updateSubzeroStagedMovement();
+
+            // Every 30 ticks (0.5s): squadron coordination and launch check
+            if (subzeroCombatTimer % 30 === 0) {
+                updateSubzeroSquadrons();
+            }
+
+            // Every 30 ticks staggered: Crux auto-repair bot check
+            if (subzeroCombatTimer % 30 === 15) {
                 updateCruxRebuilder();
             }
         }
     } catch(err) {
-        Log.err("[CryogenicFrontiers] Error in rebuilder update: " + err);
+        Log.err("[CryogenicFrontiers] Error in subzero combat update: " + err);
     }
 }));
