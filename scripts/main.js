@@ -181,7 +181,6 @@ var subzeroState = {
     active: false,
     timer: 0,
     builderRespawnTimer: 0,
-    stagedUnits: {},
     assaultingUnits: {},
     lastStagedTimeBoreas: 0,
     lastStagedTimeIcebreaker: 0
@@ -191,14 +190,25 @@ function resetSubzeroCragsState() {
     subzeroState.active = true;
     subzeroState.timer = 0;
     subzeroState.builderRespawnTimer = 0;
-    subzeroState.stagedUnits = {};
     subzeroState.assaultingUnits = {};
     subzeroState.lastStagedTimeBoreas = 0;
     subzeroState.lastStagedTimeIcebreaker = 0;
+
+    // Enable buildAi for Team Crux so BuilderAI actively reconstructs broken blocks
+    try {
+        var cruxTeam = Packages.mindustry.game.Team.crux;
+        var rule = Vars.state.rules.teams.get(cruxTeam);
+        if (rule != null) {
+            rule.buildAi = true;
+            rule.infiniteResources = true;
+            Log.info("[CryogenicFrontiers] Enabled Crux buildAi and infiniteResources for base repair.");
+        }
+    } catch(e) {
+        Log.err("[CryogenicFrontiers] Error enabling Crux buildAi: " + e);
+    }
 }
 
 function getSquadThreshold() {
-    // 60 ticks per second * 60 seconds = 3600 ticks per minute
     var minutes = subzeroState.timer / 3600;
     if (minutes < 6) return 2;       // 0 - 6 min: 2 units
     if (minutes < 12) return 3;      // 6 - 12 min: 3 units
@@ -207,15 +217,49 @@ function getSquadThreshold() {
     return 7;                        // 25+ min: 7-8 units
 }
 
+// Staging AI for flying units (Boreas) - holds position in Crux airspace
+var AirStagingAI = extend(Packages.mindustry.ai.types.FlyingAI, {
+    updateMovement: function() {
+        if (this.unit == null) return;
+        var stagingX = 170 * 8;
+        var stagingY = 106 * 8;
+        var dx = stagingX - this.unit.x;
+        var dy = stagingY - this.unit.y;
+        var dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist > 35) {
+            var speed = this.unit.speed();
+            this.unit.moveAt(new Packages.arc.math.geom.Vec2(dx, dy).limit(speed));
+        } else {
+            this.unit.vel.scl(0.9);
+        }
+    }
+});
+
+// Staging AI for naval units (Icebreaker) - holds position in Crux waters
+var NavalStagingAI = extend(Packages.mindustry.ai.types.GroundAI, {
+    updateMovement: function() {
+        if (this.unit == null) return;
+        var stagingX = 170 * 8;
+        var stagingY = 106 * 8;
+        var dx = stagingX - this.unit.x;
+        var dy = stagingY - this.unit.y;
+        var dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist > 45) {
+            var speed = this.unit.speed();
+            this.unit.moveAt(new Packages.arc.math.geom.Vec2(dx, dy).limit(speed));
+        } else {
+            this.unit.vel.scl(0.9);
+        }
+    }
+});
+
 function updateSubzeroSquadrons() {
     var cruxTeam = Packages.mindustry.game.Team.crux;
     if (cruxTeam == null) return;
 
-    var stagingX = 170 * 8; // tile 170
-    var stagingY = 106 * 8; // tile 106
+    var threshold = getSquadThreshold();
     var currentStagedBoreas = [];
     var currentStagedIcebreaker = [];
-    var threshold = getSquadThreshold();
 
     Groups.unit.each(cons(function(u) {
         if (u == null || u.dead || u.team != cruxTeam) return;
@@ -224,36 +268,25 @@ function updateSubzeroSquadrons() {
         var isIcebreaker = typeName.indexOf("icebreaker") !== -1;
         if (!isBoreas && !isIcebreaker) return;
 
-        var id = "" + u.id;
-        // If already launched in an assault, let native AI fight towards player
-        if (subzeroState.assaultingUnits[id]) {
+        var uid = u.id();
+        // If already launched in an assault, allow native AI to attack
+        if (subzeroState.assaultingUnits[uid]) {
             return;
         }
 
         // If unit is in Crux territory (x > 115 * 8), hold in staging
         if (u.x > 115 * 8) {
-            subzeroState.stagedUnits[id] = true;
-            try {
-                if (u.command != null && u.command() != null) {
-                    var UnitCommand = Packages.mindustry.ai.UnitCommand;
-                    if (UnitCommand != null && UnitCommand.move != null) {
-                        u.command().command(UnitCommand.move);
-                        u.command().commandPosition(stagingX, stagingY);
-                    }
+            if (isBoreas) {
+                if (!(u.controller() instanceof AirStagingAI)) {
+                    u.controller(new AirStagingAI());
                 }
-            } catch(e) {}
-
-            // Steer gently toward staging point if drifting away
-            var dx = stagingX - u.x;
-            var dy = stagingY - u.y;
-            var distSq = dx * dx + dy * dy;
-            if (distSq > (24 * 24)) {
-                var angle = Math.atan2(dy, dx);
-                u.vel.add(Math.cos(angle) * 0.35, Math.sin(angle) * 0.35);
+                currentStagedBoreas.push(u);
+            } else if (isIcebreaker) {
+                if (!(u.controller() instanceof NavalStagingAI)) {
+                    u.controller(new NavalStagingAI());
+                }
+                currentStagedIcebreaker.push(u);
             }
-
-            if (isBoreas) currentStagedBoreas.push(u);
-            if (isIcebreaker) currentStagedIcebreaker.push(u);
         }
     }));
 
@@ -266,16 +299,9 @@ function updateSubzeroSquadrons() {
         if (currentStagedBoreas.length >= threshold || elapsedBoreas > 150) {
             for (var i = 0; i < currentStagedBoreas.length; i++) {
                 var unitB = currentStagedBoreas[i];
-                subzeroState.assaultingUnits["" + unitB.id] = true;
-                delete subzeroState.stagedUnits["" + unitB.id];
-                try {
-                    if (unitB.command != null && unitB.command() != null) {
-                        var UnitCommandB = Packages.mindustry.ai.UnitCommand;
-                        if (UnitCommandB != null && UnitCommandB.attack != null) {
-                            unitB.command().command(UnitCommandB.attack);
-                        }
-                    }
-                } catch(e) {}
+                subzeroState.assaultingUnits[unitB.id()] = true;
+                // Restore native assault AI
+                unitB.controller(unitB.type.createController());
             }
             subzeroState.lastStagedTimeBoreas = 0;
             Log.info("[CryogenicFrontiers] Crux launched Boreas squadron (" + currentStagedBoreas.length + " units, Threshold: " + threshold + ")");
@@ -293,16 +319,9 @@ function updateSubzeroSquadrons() {
         if (currentStagedIcebreaker.length >= threshold || elapsedIce > 150) {
             for (var j = 0; j < currentStagedIcebreaker.length; j++) {
                 var unitI = currentStagedIcebreaker[j];
-                subzeroState.assaultingUnits["" + unitI.id] = true;
-                delete subzeroState.stagedUnits["" + unitI.id];
-                try {
-                    if (unitI.command != null && unitI.command() != null) {
-                        var UnitCommandI = Packages.mindustry.ai.UnitCommand;
-                        if (UnitCommandI != null && UnitCommandI.attack != null) {
-                            unitI.command().command(UnitCommandI.attack);
-                        }
-                    }
-                } catch(e) {}
+                subzeroState.assaultingUnits[unitI.id()] = true;
+                // Restore native assault AI
+                unitI.controller(unitI.type.createController());
             }
             subzeroState.lastStagedTimeIcebreaker = 0;
             Log.info("[CryogenicFrontiers] Crux launched Icebreaker fleet (" + currentStagedIcebreaker.length + " units, Threshold: " + threshold + ")");
@@ -318,6 +337,13 @@ function updateCruxRebuilder() {
 
     var core = cruxTeam.core();
     if (core == null) return;
+
+    // Ensure Crux buildAi is active
+    var rule = Vars.state.rules.teams.get(cruxTeam);
+    if (rule != null && !rule.buildAi) {
+        rule.buildAi = true;
+        rule.infiniteResources = true;
+    }
 
     // 1. Maintain active Frost Beta builder drone
     var activeBuilder = null;
@@ -335,57 +361,26 @@ function updateCruxRebuilder() {
             subzeroState.builderRespawnTimer--;
             return;
         }
-        // Spawn Frost Beta constructor drone at Crux core
+        // Spawn Frost Beta constructor drone at Crux core with BuilderAI
         try {
             var unitType = Vars.content.unit("cryogenic-frontiers-frost-beta");
             if (unitType != null) {
                 activeBuilder = unitType.spawn(cruxTeam, core.x, core.y);
                 if (activeBuilder != null) {
                     activeBuilder.add();
+                    activeBuilder.controller(new Packages.mindustry.ai.types.BuilderAI());
                     subzeroState.builderRespawnTimer = 35 * 60; // 35 seconds cooldown if destroyed
-                    Log.info("[CryogenicFrontiers] Deployed Crux Frost Beta base reconstruction bot.");
+                    Log.info("[CryogenicFrontiers] Deployed Crux Frost Beta base reconstruction bot with BuilderAI.");
                 }
             }
         } catch(err) {
             Log.err("[CryogenicFrontiers] Error spawning Crux builder bot: " + err);
         }
-    }
-
-    if (activeBuilder == null) return;
-
-    // 2. Service broken structure plans from Team.crux.data().plans
-    try {
-        var teamData = cruxTeam.data();
-        if (teamData != null && teamData.plans != null && !teamData.plans.isEmpty()) {
-            var targetPlan = null;
-            var planSeq = teamData.plans;
-            for (var p = 0; p < planSeq.size; p++) {
-                var candidate = planSeq.get(p);
-                // Restrict to Crux home territory (x > 110)
-                if (candidate != null && candidate.x > 110) {
-                    targetPlan = candidate;
-                    break;
-                }
-            }
-
-            if (targetPlan != null) {
-                if (activeBuilder.plans != null && activeBuilder.plans.isEmpty()) {
-                    var BuildPlan = Packages.mindustry.entities.units.BuildPlan;
-                    var bPlan = new BuildPlan(targetPlan.x, targetPlan.y, targetPlan.rotation, targetPlan.block, targetPlan.config);
-                    activeBuilder.plans.add(bPlan);
-                }
-                var targetWorldX = targetPlan.x * 8;
-                var targetWorldY = targetPlan.y * 8;
-                var bdx = targetWorldX - activeBuilder.x;
-                var bdy = targetWorldY - activeBuilder.y;
-                var bdist = Math.sqrt(bdx * bdx + bdy * bdy);
-                if (bdist > 40) {
-                    activeBuilder.vel.add((bdx / bdist) * 0.45, (bdy / bdist) * 0.45);
-                }
-            }
+    } else {
+        // Ensure its controller is BuilderAI
+        if (!(activeBuilder.controller() instanceof Packages.mindustry.ai.types.BuilderAI)) {
+            activeBuilder.controller(new Packages.mindustry.ai.types.BuilderAI());
         }
-    } catch(planErr) {
-        // Safe catch for plan iteration
     }
 }
 
@@ -393,7 +388,7 @@ function updateCruxRebuilder() {
 // 7. World Tick Update Hook
 // ------------------------------------------------------------------------------
 var subzeroTickCounter = 0;
-Events.run(Packages.mindustry.game.EventType.Trigger.update, function() {
+Events.run(Packages.mindustry.game.EventType.Trigger.update, run(function() {
     try {
         if (Vars.state != null && Vars.state.isPlaying() && subzeroState.active) {
             subzeroState.timer++;
@@ -412,4 +407,4 @@ Events.run(Packages.mindustry.game.EventType.Trigger.update, function() {
     } catch(err) {
         // Keep game loop running safely
     }
-});
+}));
