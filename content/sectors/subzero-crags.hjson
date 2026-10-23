@@ -1,6 +1,7 @@
 planet: nivalis
 sector: 28
 difficulty: 3
+captureWave: 35
 research: quartz-valley
 allowLaunchLoadout: false
 allowLaunchSchematics: false
