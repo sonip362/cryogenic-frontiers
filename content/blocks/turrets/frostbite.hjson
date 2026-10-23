@@ -73,6 +73,12 @@ ammoTypes: {
     hitEffect: hitLancer
   }
 }
+consumes: {
+  coolant: {
+    amount: 0.2
+    optional: true
+  }
+}
 requirements: [
   glacite/70
   cryo-shale/50

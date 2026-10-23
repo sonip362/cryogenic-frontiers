@@ -91,6 +91,12 @@ ammoTypes: {
     }
   }
 }
+consumes: {
+  coolant: {
+    amount: 0.3
+    optional: true
+  }
+}
 requirements: [
   glacite/200
   cryo-shale/160

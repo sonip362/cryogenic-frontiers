@@ -99,6 +99,12 @@ ammoTypes: {
     lightningColor: "a9d8ff"
   }
 }
+consumes: {
+  coolant: {
+    amount: 0.3
+    optional: true
+  }
+}
 requirements: [
   glacite/190
   cryo-shale/160
