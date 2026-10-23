@@ -277,6 +277,29 @@ function updateSubzeroStagedMovement() {
     }));
 }
 
+// Restores native combat assault AI to released units
+function restoreUnitCombatAI(unit) {
+    if (unit == null || unit.dead) return;
+    try {
+        if (unit.type != null) {
+            unit.controller(unit.type.createController(unit));
+            return;
+        }
+    } catch(err) {}
+
+    // Fallback if createController reflection fails
+    try {
+        var isFlying = (unit.isFlying != null && (typeof unit.isFlying === "function" ? unit.isFlying() : unit.isFlying));
+        if (isFlying) {
+            unit.controller(new Packages.mindustry.ai.types.FlyingAI());
+        } else {
+            unit.controller(new Packages.mindustry.ai.types.GroundAI());
+        }
+    } catch(err2) {
+        Log.err("[CryogenicFrontiers] Error restoring unit AI: " + err2);
+    }
+}
+
 // Scans units, enforces waiting with NoAI, and launches assault when squad size reached
 function updateSubzeroSquadrons() {
     var cruxTeam = Packages.mindustry.game.Team.crux;
@@ -311,7 +334,7 @@ function updateSubzeroSquadrons() {
         if (u.x < 115 * 8) {
             assaultingUnitIds[uid] = true;
             delete stagedUnitIds[uid];
-            u.controller(u.type.createController());
+            restoreUnitCombatAI(u);
             return;
         }
 
@@ -355,7 +378,7 @@ function updateSubzeroSquadrons() {
                 var ubId = "" + ubNum;
                 assaultingUnitIds[ubId] = true;
                 delete stagedUnitIds[ubId];
-                ub.controller(ub.type.createController());
+                restoreUnitCombatAI(ub);
             }
             lastStagedTimeBoreas = 0;
             Log.info("[CryogenicFrontiers] Crux launched Boreas air squadron (" + currentStagedBoreas.length + " units, Threshold: " + threshold + ").");
@@ -378,7 +401,7 @@ function updateSubzeroSquadrons() {
                 var uiId = "" + uiNum;
                 assaultingUnitIds[uiId] = true;
                 delete stagedUnitIds[uiId];
-                ui.controller(ui.type.createController());
+                restoreUnitCombatAI(ui);
             }
             lastStagedTimeIcebreaker = 0;
             Log.info("[CryogenicFrontiers] Crux launched Icebreaker naval fleet (" + currentStagedIcebreaker.length + " units, Threshold: " + threshold + ").");
