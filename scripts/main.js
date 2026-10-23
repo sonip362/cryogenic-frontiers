@@ -187,7 +187,7 @@ var lastStagedTimeIcebreaker = 0;
 
 function initSubzeroCombat() {
     subzeroCombatActive = true;
-    subzeroCombatTimer = 0;
+    subzeroCombatTimer = (Vars.state != null && Vars.state.tick > 0) ? Vars.state.tick : 0;
     builderRespawnTimer = 0;
     stagedUnitIds = {};
     assaultingUnitIds = {};
@@ -207,19 +207,33 @@ function initSubzeroCombat() {
     }
 }
 
+// Retrieves persistent world tick count from Mindustry GameState
+function getCurrentCombatTick() {
+    if (Vars.state != null && Vars.state.tick > 0) {
+        return Vars.state.tick;
+    }
+    return subzeroCombatTimer;
+}
+
 // Dynamic squad threshold: starts at 2 units in early game, scales up over time
 function getSquadThreshold() {
-    var minutes = subzeroCombatTimer / (60 * 60);
-    if (minutes < 5) {
-        return 2; // 0-5 min: 2 units at a time
-    } else if (minutes < 10) {
-        return 3; // 5-10 min: 3 units
-    } else if (minutes < 16) {
-        return 4; // 10-16 min: 4 units
-    } else if (minutes < 24) {
-        return 5; // 16-24 min: 5 units
+    var tick = getCurrentCombatTick();
+    var minutes = tick / (60 * 60);
+
+    if (minutes < 4) {
+        return 2; // 0-4 min: 2 units at a time
+    } else if (minutes < 8) {
+        return 3; // 4-8 min: 3 units
+    } else if (minutes < 14) {
+        return 4; // 8-14 min: 4 units
+    } else if (minutes < 20) {
+        return 5; // 14-20 min: 5 units
+    } else if (minutes < 26) {
+        return 6; // 20-26 min: 6 units
+    } else if (minutes < 32) {
+        return 7; // 26-32 min: 7 units
     } else {
-        return 6; // 24+ min: 6 units
+        return 8; // 32+ min: 8 units
     }
 }
 
@@ -364,12 +378,14 @@ function updateSubzeroSquadrons() {
         }
     }));
 
+    var currentTick = getCurrentCombatTick();
+
     // Boreas Squadron Launch
     if (currentStagedBoreas.length > 0) {
         if (lastStagedTimeBoreas === 0) {
-            lastStagedTimeBoreas = subzeroCombatTimer;
+            lastStagedTimeBoreas = currentTick;
         }
-        var elapsedBoreas = (subzeroCombatTimer - lastStagedTimeBoreas) / 60;
+        var elapsedBoreas = (currentTick - lastStagedTimeBoreas) / 60;
         // Launch if squad reaches threshold, or timeout (> 150s), or under player attack
         if (currentStagedBoreas.length >= threshold || elapsedBoreas > 150 || boreasUnderAttack) {
             for (var b = 0; b < currentStagedBoreas.length; b++) {
@@ -381,7 +397,7 @@ function updateSubzeroSquadrons() {
                 restoreUnitCombatAI(ub);
             }
             lastStagedTimeBoreas = 0;
-            Log.info("[CryogenicFrontiers] Crux launched Boreas air squadron (" + currentStagedBoreas.length + " units, Threshold: " + threshold + ").");
+            Log.info("[CryogenicFrontiers] Crux launched Boreas air squadron (" + currentStagedBoreas.length + " units, Threshold: " + threshold + ", Elapsed: " + Math.floor(currentTick / 3600) + "m).");
         }
     } else {
         lastStagedTimeBoreas = 0;
@@ -390,9 +406,9 @@ function updateSubzeroSquadrons() {
     // Icebreaker Fleet Launch
     if (currentStagedIcebreaker.length > 0) {
         if (lastStagedTimeIcebreaker === 0) {
-            lastStagedTimeIcebreaker = subzeroCombatTimer;
+            lastStagedTimeIcebreaker = currentTick;
         }
-        var elapsedIce = (subzeroCombatTimer - lastStagedTimeIcebreaker) / 60;
+        var elapsedIce = (currentTick - lastStagedTimeIcebreaker) / 60;
         // Launch if fleet reaches threshold, or timeout (> 150s), or under player attack
         if (currentStagedIcebreaker.length >= threshold || elapsedIce > 150 || icebreakerUnderAttack) {
             for (var i = 0; i < currentStagedIcebreaker.length; i++) {
@@ -404,7 +420,7 @@ function updateSubzeroSquadrons() {
                 restoreUnitCombatAI(ui);
             }
             lastStagedTimeIcebreaker = 0;
-            Log.info("[CryogenicFrontiers] Crux launched Icebreaker naval fleet (" + currentStagedIcebreaker.length + " units, Threshold: " + threshold + ").");
+            Log.info("[CryogenicFrontiers] Crux launched Icebreaker naval fleet (" + currentStagedIcebreaker.length + " units, Threshold: " + threshold + ", Elapsed: " + Math.floor(currentTick / 3600) + "m).");
         }
     } else {
         lastStagedTimeIcebreaker = 0;
