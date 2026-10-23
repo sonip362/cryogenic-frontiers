@@ -227,13 +227,11 @@ function updateSubzeroStagedMovement() {
     if (cruxTeam == null) return;
 
     Groups.unit.each(cons(function(u) {
-        if (u == null || u.dead() || u.team() != cruxTeam) return;
+        if (u == null || u.dead || u.team != cruxTeam) return;
         var uid = u.id();
         if (subzeroState.stagedUnitIds[uid]) {
-            var ux = u.x();
-            var uy = u.y();
-            var dx = stagingX - ux;
-            var dy = stagingY - uy;
+            var dx = stagingX - u.x;
+            var dy = stagingY - u.y;
             var dist = Math.sqrt(dx * dx + dy * dy);
             if (dist > 30) {
                 var spd = u.speed();
@@ -255,7 +253,7 @@ function updateSubzeroSquadrons() {
     var currentStagedIcebreaker = [];
 
     Groups.unit.each(cons(function(u) {
-        if (u == null || u.dead() || u.team() != cruxTeam) return;
+        if (u == null || u.dead || u.team != cruxTeam) return;
         var typeName = u.type != null ? ("" + u.type.name) : "";
         var isBoreas = typeName.indexOf("boreas") !== -1;
         var isIcebreaker = typeName.indexOf("icebreaker") !== -1;
@@ -268,7 +266,7 @@ function updateSubzeroSquadrons() {
         }
 
         // If unit is in Crux territory (x > 115 * 8), hold in staging
-        if (u.x() > 115 * 8) {
+        if (u.x > 115 * 8) {
             // Assign NoAI so the unit halts its attack rush
             if (!(u.controller() instanceof Packages.mindustry.ai.types.NoAI)) {
                 u.controller(new Packages.mindustry.ai.types.NoAI());
@@ -339,10 +337,26 @@ function updateCruxRebuilder() {
         rule.infiniteResources = true;
     }
 
-    // 1. Maintain active Frost Beta builder drone
+    // Check if there are active broken blocks in Crux home territory (x > 115)
+    var hasCruxPlans = false;
+    try {
+        var teamData = cruxTeam.data();
+        if (teamData != null && teamData.plans != null && !teamData.plans.isEmpty()) {
+            var planSeq = teamData.plans;
+            for (var p = 0; p < planSeq.size; p++) {
+                var candidate = planSeq.get(p);
+                if (candidate != null && candidate.x > 115) {
+                    hasCruxPlans = true;
+                    break;
+                }
+            }
+        }
+    } catch(err) {}
+
+    // Maintain active Frost Beta builder drone
     var activeBuilder = null;
     Groups.unit.each(cons(function(u) {
-        if (u != null && !u.dead() && u.team() == cruxTeam && u.type != null) {
+        if (u != null && !u.dead && u.team == cruxTeam && u.type != null) {
             var typeName = "" + u.type.name;
             if (typeName.indexOf("frost-beta") !== -1) {
                 activeBuilder = u;
@@ -355,25 +369,52 @@ function updateCruxRebuilder() {
             subzeroState.builderRespawnTimer--;
             return;
         }
-        // Spawn Frost Beta constructor drone at Crux core with BuilderAI
+        // Spawn Frost Beta constructor drone at Crux core
         try {
             var unitType = Vars.content.unit("cryogenic-frontiers-frost-beta");
             if (unitType != null) {
                 activeBuilder = unitType.spawn(cruxTeam, core.x, core.y);
                 if (activeBuilder != null) {
                     activeBuilder.add();
-                    activeBuilder.controller(new Packages.mindustry.ai.types.BuilderAI());
+                    // Start parked at core with NoAI so it never attacks
+                    activeBuilder.controller(new Packages.mindustry.ai.types.NoAI());
                     subzeroState.builderRespawnTimer = 35 * 60; // 35 seconds cooldown if destroyed
-                    Log.info("[CryogenicFrontiers] Deployed Crux Frost Beta base reconstruction bot with BuilderAI.");
+                    Log.info("[CryogenicFrontiers] Deployed Crux Frost Beta base reconstruction bot.");
                 }
             }
         } catch(err) {
             Log.err("[CryogenicFrontiers] Error spawning Crux builder bot: " + err);
         }
-    } else {
-        // Ensure its controller is BuilderAI
-        if (!(activeBuilder.controller() instanceof Packages.mindustry.ai.types.BuilderAI)) {
-            activeBuilder.controller(new Packages.mindustry.ai.types.BuilderAI());
+    }
+
+    if (activeBuilder != null) {
+        // Behavioral control:
+        // 1. If broken blocks exist in Crux territory, activate BuilderAI
+        if (hasCruxPlans) {
+            if (!(activeBuilder.controller() instanceof Packages.mindustry.ai.types.BuilderAI)) {
+                activeBuilder.controller(new Packages.mindustry.ai.types.BuilderAI());
+            }
+        } else {
+            // 2. When idle (no broken blocks), switch to NoAI and park at Crux core
+            if (!(activeBuilder.controller() instanceof Packages.mindustry.ai.types.NoAI)) {
+                activeBuilder.controller(new Packages.mindustry.ai.types.NoAI());
+            }
+            var cdx = core.x - activeBuilder.x;
+            var cdy = core.y - activeBuilder.y;
+            var cdist = Math.sqrt(cdx * cdx + cdy * cdy);
+            if (cdist > 40) {
+                activeBuilder.vel().set(cdx, cdy).limit(activeBuilder.speed());
+            } else {
+                activeBuilder.vel().scl(0.8);
+            }
+        }
+
+        // 3. Strict territory tether: Never allow the repair bot past x < 125 * 8
+        if (activeBuilder.x < 125 * 8) {
+            activeBuilder.x = core.x;
+            activeBuilder.y = core.y;
+            activeBuilder.vel().set(0, 0);
+            activeBuilder.controller(new Packages.mindustry.ai.types.NoAI());
         }
     }
 }
